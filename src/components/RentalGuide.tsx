@@ -31,7 +31,7 @@ const steps = [
     step: "03",
     title: "Pickup / Delivery",
     description:
-      "Unit dapat diambil langsung di studio kami (Jl. Sudirman No. 123, Jakarta Selatan) atau dikirim ke lokasi produksi via kurir khusus dengan biaya tambahan.",
+      "Unit dapat diambil langsung di studio kami (Jl. Oscar III, Bambu Apus, Pamulang) atau dikirim ke lokasi produksi via kurir khusus dengan biaya tambahan.",
   },
   {
     icon: SearchCheck,
@@ -173,7 +173,7 @@ export default function RentalGuide() {
           {/* CTA below FAQ */}
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <a
-              href={`https://wa.me/6281234567890?text=${encodeURIComponent("Halo MediaVendor Pro, saya ingin bertanya tentang proses sewa alat multimedia.")}`}
+              href={`https://wa.me/6285122979535?text=${encodeURIComponent("Halo MediaVendor Pro, saya ingin bertanya tentang proses sewa alat multimedia.")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-500"

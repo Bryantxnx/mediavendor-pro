@@ -106,14 +106,14 @@ export default function Portfolio() {
         {/* Section Header */}
         <div className="mb-12 text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
-            Our Work
+            Karya Kami
           </p>
           <h2 className="mb-4 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Featured Portfolio
+            Portofolio Unggulan
           </h2>
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Real projects delivered for BUMN, government institutions, and
-            leading brands across Indonesia.
+            Proyek nyata yang telah kami kerjakan untuk BUMN, instansi pemerintah,
+            dan brand ternama di seluruh Indonesia.
           </p>
         </div>
 
@@ -241,7 +241,7 @@ export default function Portfolio() {
                 {modalProject.title}
               </h3>
               <p className="mb-3 text-sm font-medium text-accent">
-                Client: {modalProject.client}
+                Klien: {modalProject.client}
               </p>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {modalProject.details}
@@ -250,7 +250,7 @@ export default function Portfolio() {
               {/* CTA */}
               <div className="mt-5 flex flex-wrap gap-3">
                 <a
-                  href={`https://wa.me/6281234567890?text=${encodeURIComponent(`Halo MediaVendor Pro, saya tertarik dengan proyek seperti "${modalProject.title}". Bisa konsultasi lebih lanjut?`)}`}
+                  href={`https://wa.me/6285122979535?text=${encodeURIComponent(`Halo MediaVendor Pro, saya tertarik dengan proyek seperti \"${modalProject.title}\". Bisa konsultasi lebih lanjut?`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-xs font-semibold text-accent-foreground transition-all hover:brightness-110"

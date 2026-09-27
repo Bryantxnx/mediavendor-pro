@@ -2,7 +2,7 @@
 
 import { MessageCircle } from "lucide-react";
 
-const WA_NUMBER = "6281234567890";
+const WA_NUMBER = "6285122979535";
 const WA_TEXT = encodeURIComponent(
   "Halo MediaVendor Pro, saya ingin konsultasi sewa alat multimedia / jasa produksi"
 );

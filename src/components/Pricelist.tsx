@@ -242,7 +242,7 @@ function buildWhatsAppUrl(itemName: string, category: string): string {
   const text = encodeURIComponent(
     `Halo MediaVendor Pro, saya ingin sewa unit *${itemName}* (Kategori: ${category}). Apakah ready untuk tanggal...`
   );
-  return `https://wa.me/6281234567890?text=${text}`;
+  return `https://wa.me/6285122979535?text=${text}`;
 }
 
 function scrollToContactWithPrefill(itemName: string) {

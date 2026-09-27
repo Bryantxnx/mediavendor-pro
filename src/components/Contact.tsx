@@ -12,27 +12,27 @@ import {
 } from "lucide-react";
 
 const GOOGLE_MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=Jl.+Sudirman+No.+123+Jakarta+Selatan";
+  "https://www.google.com/maps/search/?api=1&query=Jl.+Oscar+III+Bambu+Apus+Pamulang";
 
 const contactInfo = [
   {
     icon: Phone,
     label: "Phone / WhatsApp",
-    value: "+62 812-3456-7890",
-    href: "tel:+6281234567890",
+    value: "+62 851-2297-9535",
+    href: "tel:+6285122979535",
     external: false,
   },
   {
     icon: Mail,
     label: "Email",
-    value: "hello@mediavendorpro.com",
-    href: "mailto:hello@mediavendorpro.com",
+    value: "xiole3113@gmail.com",
+    href: "mailto:xiole3113@gmail.com",
     external: false,
   },
   {
     icon: MapPin,
     label: "Studio",
-    value: "Jl. Sudirman No. 123, Jakarta Selatan",
+    value: "Jl. Oscar III, Bambu Apus, Pamulang",
     href: GOOGLE_MAPS_URL,
     external: true,
   },
@@ -73,14 +73,14 @@ export default function Contact() {
         {/* Section Header */}
         <div className="mb-16 text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
-            Get In Touch
+            Hubungi Kami
           </p>
           <h2 className="mb-4 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Ready to Start Your Project?
+            Siap Memulai Proyek Anda?
           </h2>
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Tell us about your project requirements and we&apos;ll get back to you
-            with a custom quote within 24 hours.
+            Ceritakan kebutuhan proyek Anda dan kami akan mengirimkan penawaran
+            khusus dalam waktu 24 jam.
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function Contact() {
           {/* Contact Info */}
           <div className="lg:col-span-2">
             <h3 className="mb-6 font-heading text-lg font-semibold text-foreground">
-              Contact Information
+              Informasi Kontak
             </h3>
 
             <div className="space-y-5">
@@ -153,12 +153,12 @@ export default function Contact() {
                 Need Equipment Today?
               </h4>
               <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
-                Chat langsung via WhatsApp untuk same-day rentals dan cek
+                Chat langsung via WhatsApp untuk sewa hari ini dan cek
                 ketersediaan unit. Kami siap membantu kebutuhan produksi
                 mendadak Anda.
               </p>
               <a
-                href={`https://wa.me/6281234567890?text=${encodeURIComponent("Halo MediaVendor Pro, saya ingin cek ketersediaan alat untuk hari ini.")}`}
+                href={`https://wa.me/6285122979535?text=${encodeURIComponent("Halo MediaVendor Pro, saya ingin cek ketersediaan alat untuk hari ini.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-500"
@@ -178,18 +178,18 @@ export default function Contact() {
                     <CheckCircle className="h-8 w-8 text-accent" aria-hidden="true" />
                   </div>
                   <h3 className="mb-2 font-heading text-xl font-semibold text-foreground">
-                    Message Sent!
+                    Pesan Terkirim!
                   </h3>
                   <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-                    Thank you for reaching out. Our team will review your request
-                    and get back to you within 24 hours.
+                    Terima kasih telah menghubungi kami. Tim kami akan meninjau permintaan Anda
+                    dan menghubungi Anda dalam 24 jam.
                   </p>
                   <button
                     type="button"
                     onClick={() => setSubmitted(false)}
                     className="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted cursor-pointer"
                   >
-                    Send Another Message
+                    Kirim Pesan Lain
                   </button>
                 </div>
               ) : (
@@ -200,14 +200,14 @@ export default function Contact() {
                         htmlFor="name"
                         className="mb-1.5 block text-xs font-medium text-foreground"
                       >
-                        Full Name <span className="text-accent">*</span>
+                        Nama Lengkap <span className="text-accent">*</span>
                       </label>
                       <input
                         type="text"
                         id="name"
                         name="name"
                         required
-                        placeholder="John Doe"
+                        placeholder="Nama Anda"
                         className="w-full rounded-md border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                       />
                     </div>
@@ -223,7 +223,7 @@ export default function Contact() {
                         id="email"
                         name="email"
                         required
-                        placeholder="john@company.com"
+                        placeholder="email@perusahaan.com"
                         className="w-full rounded-md border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                       />
                     </div>
@@ -235,13 +235,13 @@ export default function Contact() {
                         htmlFor="phone"
                         className="mb-1.5 block text-xs font-medium text-foreground"
                       >
-                        Phone Number
+                        Nomor Telepon
                       </label>
                       <input
                         type="tel"
                         id="phone"
                         name="phone"
-                        placeholder="+62 812-xxxx-xxxx"
+                        placeholder="+62 8xx-xxxx-xxxx"
                         className="w-full rounded-md border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                       />
                     </div>
@@ -250,7 +250,7 @@ export default function Contact() {
                         htmlFor="service"
                         className="mb-1.5 block text-xs font-medium text-foreground"
                       >
-                        Service Type <span className="text-accent">*</span>
+                        Jenis Layanan <span className="text-accent">*</span>
                       </label>
                       <select
                         id="service"
@@ -260,15 +260,15 @@ export default function Contact() {
                         className="w-full rounded-md border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
                       >
                         <option value="" disabled>
-                          Select a service
+                          Pilih layanan
                         </option>
-                        <option value="camera-rental">Camera Rental</option>
-                        <option value="lighting">Lighting Setup</option>
-                        <option value="audio">Audio Equipment</option>
-                        <option value="video-production">Video Production</option>
-                        <option value="post-production">Post Production</option>
-                        <option value="crew">Crew Hiring</option>
-                        <option value="package">Full Package</option>
+                        <option value="camera-rental">Sewa Kamera</option>
+                        <option value="lighting">Peralatan Lighting</option>
+                        <option value="audio">Peralatan Audio</option>
+                        <option value="video-production">Produksi Video</option>
+                        <option value="post-production">Pasca Produksi</option>
+                        <option value="crew">Sewa Kru</option>
+                        <option value="package">Paket Lengkap</option>
                       </select>
                     </div>
                   </div>
@@ -278,7 +278,7 @@ export default function Contact() {
                       htmlFor="date"
                       className="mb-1.5 block text-xs font-medium text-foreground"
                     >
-                      Project Date
+                      Tanggal Proyek
                     </label>
                     <input
                       type="date"
@@ -293,7 +293,7 @@ export default function Contact() {
                       htmlFor="message"
                       className="mb-1.5 block text-xs font-medium text-foreground"
                     >
-                      Project Details <span className="text-accent">*</span>
+                      Detail Proyek <span className="text-accent">*</span>
                     </label>
                     <textarea
                       ref={messageRef}
@@ -301,7 +301,7 @@ export default function Contact() {
                       name="message"
                       required
                       rows={4}
-                      placeholder="Tell us about your project - location, duration, equipment needs, etc."
+                      placeholder="Ceritakan tentang proyek Anda - lokasi, durasi, kebutuhan peralatan, dll."
                       className="w-full resize-none rounded-md border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                     />
                   </div>
@@ -311,7 +311,7 @@ export default function Contact() {
                     className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring cursor-pointer sm:w-auto"
                   >
                     <Send className="h-4 w-4" aria-hidden="true" />
-                    Send Message
+                    Kirim Pesan
                   </button>
                 </form>
               )}

@@ -1,4 +1,4 @@
-import { Play, ChevronDown, Star } from "lucide-react";
+import { Play, ChevronDown, Star, MessageCircle } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -31,7 +31,7 @@ export default function Hero() {
           <div className="mb-8 animate-fade-in inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5">
             <Star className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
             <span className="text-xs font-medium tracking-wide text-accent">
-              TRUSTED BY 500+ CLIENTS
+              DIPERCAYA 500+ KLIEN
             </span>
           </div>
 
@@ -39,13 +39,13 @@ export default function Hero() {
           <h1
             className="mb-6 max-w-4xl font-heading text-4xl font-extrabold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl animate-slide-up"
           >
-            Premium Multimedia{" "}
+            Sewa Peralatan{" "}
             <span className="relative">
-              <span className="text-accent">Equipment</span>
+              <span className="text-accent">Multimedia</span>
               <span className="absolute -bottom-1 left-0 h-1 w-full rounded-full bg-accent/30" />
             </span>
             <br />
-            &amp; Production Services
+            &amp; Jasa Produksi Profesional
           </h1>
 
           {/* Subheading */}
@@ -53,9 +53,9 @@ export default function Hero() {
             className="mb-10 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg animate-slide-up"
             style={{ animationDelay: "0.15s" }}
           >
-            From cameras and lighting to full production crews - we provide
-            everything you need to bring your creative vision to life. Rent
-            professional gear at competitive prices.
+            Dari kamera, lighting, hingga kru produksi lengkap — kami
+            menyediakan semua kebutuhan untuk mewujudkan visi kreatif Anda.
+            Sewa peralatan profesional dengan harga kompetitif.
           </p>
 
           {/* CTA Buttons */}
@@ -67,14 +67,23 @@ export default function Hero() {
               href="#pricelist"
               className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-accent px-8 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
-              View Pricelist
+              Lihat Pricelist
+            </a>
+            <a
+              href="https://wa.me/6285122979535?text=Halo%20MediaVendor%20Pro%2C%20saya%20ingin%20konsultasi%20tentang%20sewa%20alat%20%2F%20jasa%20produksi."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-emerald-600 px-8 text-sm font-semibold text-white transition-all hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+            >
+              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              Konsultasi WhatsApp
             </a>
             <a
               href="#portfolio"
               className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-border bg-muted/50 px-8 text-sm font-medium text-foreground transition-all hover:border-accent/50 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <Play className="h-4 w-4 text-accent" aria-hidden="true" />
-              Our Work
+              Portofolio Kami
             </a>
           </div>
 
@@ -84,9 +93,9 @@ export default function Hero() {
             style={{ animationDelay: "0.45s" }}
           >
             {[
-              { value: "500+", label: "Projects" },
-              { value: "150+", label: "Equipment" },
-              { value: "8+", label: "Years" },
+              { value: "500+", label: "Proyek" },
+              { value: "150+", label: "Peralatan" },
+              { value: "8+", label: "Tahun" },
               { value: "4.9", label: "Rating" },
             ].map((stat) => (
               <div

@@ -7,9 +7,9 @@ import {
 } from "lucide-react";
 
 const GOOGLE_MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=Jl.+Sudirman+No.+123+Jakarta+Selatan";
+  "https://www.google.com/maps/search/?api=1&query=Jl.+Oscar+III+Bambu+Apus+Pamulang";
 
-const WA_URL = `https://wa.me/6281234567890?text=${encodeURIComponent(
+const WA_URL = `https://wa.me/6285122979535?text=${encodeURIComponent(
   "Halo MediaVendor Pro, saya ingin konsultasi sewa alat multimedia / jasa produksi"
 )}`;
 
@@ -92,7 +92,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/said88x_"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -101,7 +101,7 @@ export default function Footer() {
                 <InstagramIcon className="h-4 w-4" />
               </a>
               <a
-                href="https://youtube.com"
+                href="https://youtube.com/@said88x_"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube"
@@ -163,7 +163,7 @@ export default function Footer() {
                   className="flex items-start gap-2.5 text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-                  <span>Jl. Sudirman No. 123, Jakarta Selatan, Indonesia</span>
+                  <span>Jl. Oscar III, Bambu Apus, Pamulang</span>
                 </a>
               </li>
               <li>
@@ -174,16 +174,16 @@ export default function Footer() {
                   className="flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   <Phone className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-                  +62 812-3456-7890
+                  +62 851-2297-9535
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:hello@mediavendorpro.com"
+                href="mailto:xiole3113@gmail.com"
                   className="flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   <Mail className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-                  hello@mediavendorpro.com
+                  xiole3113@gmail.com
                 </a>
               </li>
             </ul>

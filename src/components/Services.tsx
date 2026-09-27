@@ -13,51 +13,51 @@ import {
 const services = [
   {
     icon: Camera,
-    title: "Camera Rental",
+    title: "Sewa Kamera",
     pricelistTab: "Cameras",
     description:
-      "Professional DSLR, mirrorless, and cinema cameras from top brands like Sony, Canon, RED, and Blackmagic.",
-    features: ["4K/6K/8K Ready", "Full Frame Sensors", "Lens Kits Included"],
+      "Kamera profesional DSLR, mirrorless, dan cinema dari brand ternama seperti Sony, Canon, RED, dan Blackmagic.",
+    features: ["4K/6K/8K Ready", "Full Frame", "Termasuk Lensa"],
   },
   {
     icon: Lightbulb,
-    title: "Lighting Setup",
+    title: "Peralatan Lighting",
     pricelistTab: "Lighting",
     description:
-      "Complete lighting solutions from LED panels, softboxes, and studio strobes to outdoor HMI setups.",
-    features: ["LED Panels", "Softbox Kits", "RGB Effects"],
+      "Solusi pencahayaan lengkap dari LED panel, softbox, studio strobe, hingga setup HMI outdoor.",
+    features: ["LED Panel", "Softbox Kit", "RGB Efek"],
   },
   {
     icon: Mic,
-    title: "Audio Equipment",
+    title: "Peralatan Audio",
     pricelistTab: "Audio",
     description:
-      "Wireless microphone systems, boom kits, field recorders, and professional audio monitoring gear.",
-    features: ["Wireless Lavs", "Boom Kits", "Field Recorders"],
+      "Sistem mikrofon wireless, boom kit, field recorder, dan peralatan monitoring audio profesional.",
+    features: ["Wireless Lav", "Boom Kit", "Field Recorder"],
   },
   {
     icon: Video,
-    title: "Video Production",
+    title: "Produksi Video",
     pricelistTab: "Packages",
     description:
-      "End-to-end video production services including shooting, editing, color grading, and delivery.",
-    features: ["Multi-Camera", "Color Grading", "4K Delivery"],
+      "Layanan produksi video end-to-end termasuk shooting, editing, color grading, dan delivery.",
+    features: ["Multi-Kamera", "Color Grading", "Delivery 4K"],
   },
   {
     icon: Film,
-    title: "Post Production",
+    title: "Pasca Produksi",
     pricelistTab: "Packages",
     description:
-      "Professional editing, motion graphics, VFX, sound design, and final mastering for all formats.",
+      "Editing profesional, motion graphics, VFX, sound design, dan mastering final untuk semua format.",
     features: ["Motion Graphics", "VFX", "Sound Design"],
   },
   {
     icon: Users,
-    title: "Crew Hiring",
+    title: "Sewa Kru",
     pricelistTab: "Packages",
     description:
-      "Experienced cameramen, directors, gaffers, sound engineers, and production assistants on demand.",
-    features: ["Directors", "Cameramen", "Gaffers"],
+      "Kameraman, sutradara, gaffer, sound engineer, dan asisten produksi berpengalaman siap sedia.",
+    features: ["Sutradara", "Kameraman", "Gaffer"],
   },
 ];
 
@@ -68,14 +68,14 @@ export default function Services() {
         {/* Section Header */}
         <div className="mb-16 text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
-            What We Offer
+            Layanan Kami
           </p>
           <h2 className="mb-4 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Our Services
+            Apa yang Kami Tawarkan
           </h2>
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground">
-            From single equipment rental to full-scale production management, we
-            cover every aspect of your multimedia needs.
+            Dari sewa peralatan satuan hingga manajemen produksi skala besar,
+            kami menangani setiap aspek kebutuhan multimedia Anda.
           </p>
         </div>
 
@@ -120,7 +120,7 @@ export default function Services() {
                   href={`#pricelist-${service.pricelistTab}`}
                   className="inline-flex items-center gap-1 text-sm font-medium text-accent transition-colors hover:text-accent/80"
                 >
-                  View Pricing
+                  Lihat Harga
                   <ArrowRight
                     className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1"
                     aria-hidden="true"
