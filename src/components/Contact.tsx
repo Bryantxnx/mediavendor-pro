@@ -64,6 +64,37 @@ export default function Contact() {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = (fd.get("name") as string) || "-";
+    const email = (fd.get("email") as string) || "-";
+    const phone = (fd.get("phone") as string) || "-";
+    const service = (fd.get("service") as string) || "-";
+    const date = (fd.get("date") as string) || "-";
+    const message = (fd.get("message") as string) || "-";
+
+    const serviceLabels: Record<string, string> = {
+      "camera-rental": "Sewa Kamera",
+      lighting: "Peralatan Lighting",
+      audio: "Peralatan Audio",
+      "video-production": "Produksi Video",
+      "post-production": "Pasca Produksi",
+      crew: "Sewa Kru",
+      package: "Paket Lengkap",
+    };
+
+    const text = [
+      "Halo MediaVendor Pro, saya ingin konsultasi proyek:",
+      "",
+      `- Nama: ${name}`,
+      `- Email: ${email}`,
+      `- No. HP: ${phone}`,
+      `- Layanan: ${serviceLabels[service] ?? service}`,
+      `- Tanggal: ${date}`,
+      `- Detail Kebutuhan: ${message}`,
+    ].join("\n");
+
+    const waUrl = `https://wa.me/6285122979535?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, "_blank");
     setSubmitted(true);
   }
 

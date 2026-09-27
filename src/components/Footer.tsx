@@ -119,7 +119,7 @@ export default function Footer() {
                 <MessageCircle className="h-4 w-4" aria-hidden="true" />
               </a>
               <a
-                href="mailto:hello@mediavendorpro.com"
+                href="mailto:xiole3113@gmail.com"
                 aria-label="Email"
                 className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground transition-colors hover:border-accent hover:text-accent"
               >
