@@ -67,7 +67,7 @@ export default function Hero() {
               href="#pricelist"
               className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-accent px-8 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
-              Lihat Pricelist
+              Lihat Daftar Harga
             </a>
             <a
               href="https://wa.me/6285122979535?text=Halo%20MediaVendor%20Pro%2C%20saya%20ingin%20konsultasi%20tentang%20sewa%20alat%20%2F%20jasa%20produksi."

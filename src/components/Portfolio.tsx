@@ -4,82 +4,22 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Play, ExternalLink, X } from "lucide-react";
-
-const categories = ["All", "Video", "Event", "Commercial"] as const;
-type Category = (typeof categories)[number];
-
-interface Project {
-  title: string;
-  category: Exclude<Category, "All">;
-  client: string;
-  description: string;
-  image: string;
-  details: string;
-}
-
-const projects: Project[] = [
-  {
-    title: "Pertamina Energy Forum & Gala",
-    category: "Event",
-    client: "Pertamina",
-    description: "Multi-cam broadcast & indoor LED system for national energy forum.",
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=500&fit=crop&q=80",
-    details:
-      "Full multi-camera broadcast setup with 6 cinema cameras, indoor LED wall system, live switching, and post-event highlight reel. Coverage included keynote sessions, panel discussions, and gala dinner with 800+ attendees.",
-  },
-  {
-    title: "Bappenas National Development Forum",
-    category: "Event",
-    client: "Bappenas RI",
-    description: "Audio conference & live streaming setup for national planning forum.",
-    image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=500&fit=crop&q=80",
-    details:
-      "Complete audio conference system with 32-channel wireless microphones, 4-camera live streaming to YouTube and internal platforms, real-time graphics overlay, and simultaneous interpretation support for international delegates.",
-  },
-  {
-    title: "Pocari Sweat Sport Activation",
-    category: "Commercial",
-    client: "Pocari Sweat",
-    description: "High-speed camera & dynamic tracking footage for sport campaign.",
-    image: "https://images.unsplash.com/photo-1461896836934-bbe910c4d466?w=800&h=500&fit=crop&q=80",
-    details:
-      "High-speed Phantom camera shoot at 1000fps capturing athletic movements for TVC and digital campaign. Combined with dynamic camera tracking rigs, gimbal systems, and drone footage for a cinematic sport activation video.",
-  },
-  {
-    title: "Indonesian Golf Invitational",
-    category: "Video",
-    client: "Golf Open Tournament",
-    description: "Drone cinematography & live green feed for golf tournament coverage.",
-    image: "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=800&h=500&fit=crop&q=80",
-    details:
-      "Multi-day drone cinematography covering 18-hole championship course. Live video feed from every green with wireless transmission system, multi-camera player tracking, and same-day highlight packages for sponsors and media partners.",
-  },
-  {
-    title: "BUMN Synergy Showcase",
-    category: "Event",
-    client: "Kementerian BUMN",
-    description: "Full stage lighting & video mapping for BUMN national showcase.",
-    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=500&fit=crop&q=80",
-    details:
-      "Large-scale stage production with programmable LED lighting, projection video mapping on 20m stage backdrop, 8-camera live production, and real-time graphics integration. Event attended by ministers and 2000+ BUMN representatives.",
-  },
-  {
-    title: "Commercial TVC Launch",
-    category: "Commercial",
-    client: "Fashion & Beverage Brand",
-    description: "4K Cinema shooting & color grading for national TV commercial.",
-    image: "https://images.unsplash.com/photo-1579965342575-16428a7c8881?w=800&h=500&fit=crop&q=80",
-    details:
-      "Full cinema production with RED V-Raptor 8K, Cooke anamorphic lenses, 3-day studio and outdoor shoot. Complete post-production including color grading in DaVinci Resolve, VFX compositing, sound design, and delivery in multiple formats for TV, digital, and cinema pre-roll.",
-  },
-];
+import {
+  projects,
+  portfolioCategories,
+  type PortfolioProject,
+  type PortfolioCategory,
+} from "@/data/portfolio";
 
 export default function Portfolio() {
-  const [activeCategory, setActiveCategory] = useState<Category>("All");
-  const [modalProject, setModalProject] = useState<Project | null>(null);
+  const [activeCategory, setActiveCategory] =
+    useState<PortfolioCategory>("Semua");
+  const [modalProject, setModalProject] = useState<PortfolioProject | null>(
+    null
+  );
 
   const filtered =
-    activeCategory === "All"
+    activeCategory === "Semua"
       ? projects
       : projects.filter((p) => p.category === activeCategory);
 
@@ -92,7 +32,6 @@ export default function Portfolio() {
       if (e.key === "Escape") closeModal();
     }
     document.addEventListener("keydown", onKey);
-    // Prevent body scroll
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
@@ -112,14 +51,14 @@ export default function Portfolio() {
             Portofolio Unggulan
           </h2>
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Proyek nyata yang telah kami kerjakan untuk BUMN, instansi pemerintah,
-            dan brand ternama di seluruh Indonesia.
+            Proyek nyata yang telah kami kerjakan untuk BUMN, instansi
+            pemerintah, dan brand ternama di seluruh Indonesia.
           </p>
         </div>
 
         {/* Filter Tabs */}
         <div className="mb-10 flex flex-wrap justify-center gap-2">
-          {categories.map((cat) => (
+          {portfolioCategories.map((cat) => (
             <button
               key={cat}
               type="button"
@@ -140,18 +79,18 @@ export default function Portfolio() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((project) => (
             <button
-              key={project.title}
+              key={project.id}
               type="button"
               onClick={() => setModalProject(project)}
               className="group relative cursor-pointer overflow-hidden rounded-xl border border-border/50 bg-background text-left transition-all duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
-              {/* Image */}
-              <div className="relative aspect-[16/10] overflow-hidden">
+              {/* Image — fixed aspect-ratio container to prevent CLS */}
+              <div className="relative w-full aspect-video overflow-hidden rounded-t-xl">
                 <Image
                   src={project.image}
                   alt={project.title}
                   fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 {/* Overlay */}
@@ -173,9 +112,9 @@ export default function Portfolio() {
                     )}
                   </div>
                 </div>
-                {/* Category badge */}
+                {/* Category + Year badge */}
                 <span className="absolute right-3 top-3 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
-                  {project.category}
+                  {project.category} &middot; {project.year}
                 </span>
               </div>
 
@@ -214,13 +153,13 @@ export default function Portfolio() {
               type="button"
               onClick={closeModal}
               className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-colors hover:bg-black/70 cursor-pointer"
-              aria-label="Close preview"
+              aria-label="Tutup pratinjau"
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
 
-            {/* Image */}
-            <div className="relative aspect-video w-full">
+            {/* Image — fixed aspect-ratio */}
+            <div className="relative w-full aspect-video overflow-hidden">
               <Image
                 src={modalProject.image}
                 alt={modalProject.title}
@@ -234,21 +173,44 @@ export default function Portfolio() {
 
             {/* Content */}
             <div className="p-6">
-              <span className="mb-2 inline-block rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
-                {modalProject.category}
-              </span>
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <span className="inline-block rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+                  {modalProject.category}
+                </span>
+                <span className="text-[10px] font-medium text-muted-foreground">
+                  {modalProject.year}
+                </span>
+              </div>
               <h3 className="mb-1 font-heading text-xl font-bold text-foreground">
                 {modalProject.title}
               </h3>
               <p className="mb-3 text-sm font-medium text-accent">
                 Klien: {modalProject.client}
               </p>
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
                 {modalProject.details}
               </p>
 
+              {/* Scope list */}
+              <div className="mb-5">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Lingkup Pekerjaan
+                </p>
+                <ul className="space-y-1">
+                  {modalProject.scope.map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                    >
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               {/* CTA */}
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3">
                 <a
                   href={`https://wa.me/6285122979535?text=${encodeURIComponent(`Halo MediaVendor Pro, saya tertarik dengan proyek seperti \"${modalProject.title}\". Bisa konsultasi lebih lanjut?`)}`}
                   target="_blank"

@@ -11,11 +11,11 @@ import {
 const SITE_URL = "https://mediavendor-pro.vercel.app";
 
 const navLinks = [
-  { label: "Home", href: `${SITE_URL}/#home` },
-  { label: "Services", href: `${SITE_URL}/#services` },
-  { label: "Portfolio", href: `${SITE_URL}/#portfolio` },
-  { label: "Pricelist", href: `${SITE_URL}/#pricelist` },
-  { label: "Contact", href: `${SITE_URL}/#contact` },
+  { label: "Beranda", href: `${SITE_URL}/#home` },
+  { label: "Layanan", href: `${SITE_URL}/#services` },
+  { label: "Portofolio", href: `${SITE_URL}/#portfolio` },
+  { label: "Daftar Harga", href: `${SITE_URL}/#pricelist` },
+  { label: "Kontak", href: `${SITE_URL}/#contact` },
 ];
 
 export default function Navbar() {

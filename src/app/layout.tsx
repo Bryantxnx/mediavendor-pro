@@ -45,7 +45,7 @@ const jsonLd = {
     "Vendor multimedia profesional untuk sewa kamera, lighting, audio dan jasa produksi video di Jakarta.",
   url: SITE_URL,
   telephone: "+6285122979535",
-  email: "xiole3113@gmail.com",
+  email: "halo@mediavendorpro.id",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Jl. Oscar III, Bambu Apus",

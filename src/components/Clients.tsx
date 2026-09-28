@@ -1,17 +1,6 @@
 "use client";
 
-/* ── Client data with logo file paths ── */
-
-const clients = [
-  { name: "Pertamina", subtitle: "Energy & Oil BUMN", logo: "/logos/pertamina.jpg" },
-  { name: "Bappenas RI", subtitle: "Perencanaan Pembangunan Nasional", logo: "/logos/bappenas.png" },
-  { name: "Kementerian BUMN", subtitle: "BUMN Untuk Indonesia", logo: "/logos/kemen-bumn.png" },
-  { name: "Pocari Sweat", subtitle: "PT Amerta Indah Otsuka", logo: "/logos/pocari-sweat.svg" },
-  { name: "Kementerian Keuangan", subtitle: "Republik Indonesia", logo: "/logos/kemenkeu.png" },
-  { name: "Kementerian Pariwisata", subtitle: "Republik Indonesia", logo: "/logos/kemenpar.png" },
-  { name: "BNI", subtitle: "Bank Negara Indonesia", logo: "/logos/bni.png" },
-  { name: "Kemenpora", subtitle: "Pemuda dan Olahraga RI", logo: "/logos/kemenpora.png" },
-];
+import { clients } from "@/data/portfolio";
 
 /* ── Component ── */
 
@@ -21,7 +10,7 @@ export default function Clients() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Label */}
         <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Trusted by Industry Leaders &amp; Government Institutions
+          Dipercaya oleh Korporat &amp; Instansi Pemerintah
         </p>
 
         {/* Marquee container */}

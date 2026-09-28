@@ -17,7 +17,7 @@ const GOOGLE_MAPS_URL =
 const contactInfo = [
   {
     icon: Phone,
-    label: "Phone / WhatsApp",
+    label: "Telepon / WhatsApp",
     value: "+62 851-2297-9535",
     href: "tel:+6285122979535",
     external: false,
@@ -25,8 +25,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "xiole3113@gmail.com",
-    href: "mailto:xiole3113@gmail.com",
+    value: "halo@mediavendorpro.id",
+    href: "mailto:halo@mediavendorpro.id",
     external: false,
   },
   {
@@ -38,8 +38,8 @@ const contactInfo = [
   },
   {
     icon: Clock,
-    label: "Hours",
-    value: "Mon - Sat: 09:00 - 20:00",
+    label: "Jam Operasional",
+    value: "Senin – Sabtu: 09.00 – 20.00",
     href: "",
     external: false,
   },
@@ -47,16 +47,30 @@ const contactInfo = [
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
+  const serviceRef = useRef<HTMLSelectElement>(null);
 
   // Listen for prefill events from Pricelist component
   useEffect(() => {
     function onPrefill(e: Event) {
-      const detail = (e as CustomEvent<{ item: string }>).detail;
-      if (detail?.item && messageRef.current) {
-        messageRef.current.value = `Saya ingin booking: ${detail.item}.\n\nDetail kebutuhan:\n- Tanggal sewa: \n- Durasi: \n- Lokasi: `;
+      const detail = (e as CustomEvent<{ item: string; service?: string }>)
+        .detail;
+      if (!detail?.item) return;
+
+      // Auto-select service dropdown
+      if (detail.service && serviceRef.current) {
+        serviceRef.current.value = detail.service;
+      }
+
+      // Auto-fill message with unit name
+      if (messageRef.current) {
+        messageRef.current.value = `Saya tertarik sewa: ${detail.item}.\n\nDetail kebutuhan:\n- Tanggal sewa: \n- Durasi: \n- Lokasi: `;
         messageRef.current.focus();
       }
+
+      // Reset submitted state if previously submitted
+      setSubmitted(false);
     }
     window.addEventListener("prefill-contact", onPrefill);
     return () => window.removeEventListener("prefill-contact", onPrefill);
@@ -130,7 +144,10 @@ export default function Contact() {
                   ? {
                       href: info.href,
                       ...(info.external
-                        ? { target: "_blank" as const, rel: "noopener noreferrer" }
+                        ? {
+                            target: "_blank" as const,
+                            rel: "noopener noreferrer",
+                          }
                         : {}),
                     }
                   : {};
@@ -143,7 +160,10 @@ export default function Contact() {
                       className="flex items-start gap-4 rounded-lg border border-border/50 bg-background p-4 transition-colors hover:border-accent/30"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
-                        <Icon className="h-5 w-5 text-accent" aria-hidden="true" />
+                        <Icon
+                          className="h-5 w-5 text-accent"
+                          aria-hidden="true"
+                        />
                       </div>
                       <div>
                         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -163,7 +183,10 @@ export default function Contact() {
                     className="flex items-start gap-4 rounded-lg border border-border/50 bg-background p-4 transition-colors hover:border-accent/30"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
-                      <Icon className="h-5 w-5 text-accent" aria-hidden="true" />
+                      <Icon
+                        className="h-5 w-5 text-accent"
+                        aria-hidden="true"
+                      />
                     </div>
                     <div>
                       <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -181,7 +204,7 @@ export default function Contact() {
             {/* Quick CTA */}
             <div className="mt-8 rounded-xl border border-accent/20 bg-accent/5 p-6">
               <h4 className="mb-2 font-heading text-sm font-semibold text-foreground">
-                Need Equipment Today?
+                Butuh Alat Hari Ini?
               </h4>
               <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
                 Chat langsung via WhatsApp untuk sewa hari ini dan cek
@@ -192,6 +215,7 @@ export default function Contact() {
                 href={`https://wa.me/6285122979535?text=${encodeURIComponent("Halo MediaVendor Pro, saya ingin cek ketersediaan alat untuk hari ini.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Hubungi MediaVendor Pro via WhatsApp untuk cek ketersediaan"
                 className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-500"
               >
                 <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
@@ -206,14 +230,17 @@ export default function Contact() {
               {submitted ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
-                    <CheckCircle className="h-8 w-8 text-accent" aria-hidden="true" />
+                    <CheckCircle
+                      className="h-8 w-8 text-accent"
+                      aria-hidden="true"
+                    />
                   </div>
                   <h3 className="mb-2 font-heading text-xl font-semibold text-foreground">
                     Pesan Terkirim!
                   </h3>
                   <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-                    Terima kasih telah menghubungi kami. Tim kami akan meninjau permintaan Anda
-                    dan menghubungi Anda dalam 24 jam.
+                    Terima kasih telah menghubungi kami. Tim kami akan meninjau
+                    permintaan Anda dan menghubungi Anda dalam 24 jam.
                   </p>
                   <button
                     type="button"
@@ -224,7 +251,11 @@ export default function Contact() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form
+                  ref={formRef}
+                  onSubmit={handleSubmit}
+                  className="space-y-5"
+                >
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                       <label
@@ -284,6 +315,7 @@ export default function Contact() {
                         Jenis Layanan <span className="text-accent">*</span>
                       </label>
                       <select
+                        ref={serviceRef}
                         id="service"
                         name="service"
                         required

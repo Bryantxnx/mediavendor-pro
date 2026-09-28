@@ -68,8 +68,8 @@ const footerLinks = [
     title: "Perusahaan",
     links: [
       { label: "Tentang Kami", href: `${SITE_URL}/#services` },
-      { label: "Portfolio", href: `${SITE_URL}/#portfolio` },
-      { label: "Harga", href: `${SITE_URL}/#pricelist` },
+      { label: "Portofolio", href: `${SITE_URL}/#portfolio` },
+      { label: "Daftar Harga", href: `${SITE_URL}/#pricelist` },
       { label: "Kontak", href: `${SITE_URL}/#contact` },
     ],
   },
@@ -97,7 +97,7 @@ export default function Footer() {
                 href="https://instagram.com/said88x_"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Instagram"
+                aria-label="Ikuti MediaVendor Pro di Instagram"
                 className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground transition-colors hover:border-accent hover:text-accent"
               >
                 <InstagramIcon className="h-4 w-4" />
@@ -106,7 +106,7 @@ export default function Footer() {
                 href="https://youtube.com/@said88x_"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="YouTube"
+                aria-label="Tonton konten MediaVendor Pro di YouTube"
                 className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground transition-colors hover:border-accent hover:text-accent"
               >
                 <YoutubeIcon className="h-4 w-4" />
@@ -115,14 +115,14 @@ export default function Footer() {
                 href={WA_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="WhatsApp"
+                aria-label="Hubungi MediaVendor Pro via WhatsApp"
                 className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground transition-colors hover:border-emerald-500 hover:text-emerald-500"
               >
                 <MessageCircle className="h-4 w-4" aria-hidden="true" />
               </a>
               <a
-                href="mailto:xiole3113@gmail.com"
-                aria-label="Email"
+                href="mailto:halo@mediavendorpro.id"
+                aria-label="Kirim email ke MediaVendor Pro"
                 className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground transition-colors hover:border-accent hover:text-accent"
               >
                 <Mail className="h-4 w-4" aria-hidden="true" />
@@ -181,11 +181,11 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                href="mailto:xiole3113@gmail.com"
+                  href="mailto:halo@mediavendorpro.id"
                   className="flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   <Mail className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-                  xiole3113@gmail.com
+                  halo@mediavendorpro.id
                 </a>
               </li>
             </ul>
@@ -195,11 +195,11 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/50 pt-8 sm:flex-row">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} MediaVendor Pro. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} MediaVendor Pro. Hak cipta
+            dilindungi.
           </p>
           <p className="text-xs text-muted-foreground">
-            Premium Multimedia Equipment &amp; Services
+            Sewa Peralatan Multimedia &amp; Jasa Produksi Premium
           </p>
         </div>
       </div>

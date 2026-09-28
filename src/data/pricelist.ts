@@ -1,0 +1,231 @@
+/* ── Pricelist Data ── */
+
+export const rentalCategories = [
+  "Kamera",
+  "Lensa",
+  "Lighting",
+  "Audio",
+  "Support",
+  "Paket",
+] as const;
+
+export type RentalCategory = (typeof rentalCategories)[number];
+
+export interface PriceItem {
+  name: string;
+  category: RentalCategory;
+  pricePerDay: number;
+  pricePerWeek: number;
+  specs: string[];
+  popular?: boolean;
+}
+
+/**
+ * Maps each rental category to the contact-form service value
+ * so the "Pesan via Form" button can auto-select the correct dropdown.
+ */
+export const categoryToServiceValue: Record<RentalCategory, string> = {
+  Kamera: "camera-rental",
+  Lensa: "camera-rental",
+  Lighting: "lighting",
+  Audio: "audio",
+  Support: "camera-rental",
+  Paket: "package",
+};
+
+export const priceItems: PriceItem[] = [
+  // ── Kamera ──
+  {
+    name: "Sony A7S III",
+    category: "Kamera",
+    pricePerDay: 500_000,
+    pricePerWeek: 2_800_000,
+    specs: ["4K 120fps", "Full Frame", "Dual Card Slots"],
+  },
+  {
+    name: "Canon EOS R5",
+    category: "Kamera",
+    pricePerDay: 600_000,
+    pricePerWeek: 3_400_000,
+    specs: ["8K RAW", "45MP", "IBIS"],
+    popular: true,
+  },
+  {
+    name: "RED Komodo 6K",
+    category: "Kamera",
+    pricePerDay: 1_500_000,
+    pricePerWeek: 8_500_000,
+    specs: ["6K Super 35", "R3D RAW", "Global Shutter"],
+  },
+  {
+    name: "Blackmagic Pocket 6K Pro",
+    category: "Kamera",
+    pricePerDay: 450_000,
+    pricePerWeek: 2_500_000,
+    specs: ["6K Super 35", "BRAW", "Built-in ND"],
+  },
+  {
+    name: "Sony FX6",
+    category: "Kamera",
+    pricePerDay: 900_000,
+    pricePerWeek: 5_000_000,
+    specs: ["4K 120fps", "Full Frame", "Dual Base ISO"],
+    popular: true,
+  },
+
+  // ── Lensa ──
+  {
+    name: "Sony 24-70mm f/2.8 GM II",
+    category: "Lensa",
+    pricePerDay: 200_000,
+    pricePerWeek: 1_100_000,
+    specs: ["E-Mount", "f/2.8", "Weather Sealed"],
+  },
+  {
+    name: "Canon RF 70-200mm f/2.8",
+    category: "Lensa",
+    pricePerDay: 250_000,
+    pricePerWeek: 1_400_000,
+    specs: ["RF Mount", "f/2.8", "IS"],
+    popular: true,
+  },
+  {
+    name: "Sigma 35mm f/1.4 Art",
+    category: "Lensa",
+    pricePerDay: 150_000,
+    pricePerWeek: 800_000,
+    specs: ["Multi-Mount", "f/1.4", "Art Series"],
+  },
+  {
+    name: "Sony 85mm f/1.4 GM",
+    category: "Lensa",
+    pricePerDay: 200_000,
+    pricePerWeek: 1_100_000,
+    specs: ["E-Mount", "f/1.4", "Nano AR II"],
+  },
+
+  // ── Lighting ──
+  {
+    name: "Aputure 600d Pro",
+    category: "Lighting",
+    pricePerDay: 350_000,
+    pricePerWeek: 2_000_000,
+    specs: ["600W Daylight", "Bowens Mount", "App Control"],
+    popular: true,
+  },
+  {
+    name: "Nanlite Forza 300B",
+    category: "Lighting",
+    pricePerDay: 250_000,
+    pricePerWeek: 1_400_000,
+    specs: ["300W Bi-Color", "Bowens Mount", "Bluetooth"],
+  },
+  {
+    name: "Godox SL200 II",
+    category: "Lighting",
+    pricePerDay: 150_000,
+    pricePerWeek: 800_000,
+    specs: ["200W Daylight", "Bowens Mount", "Silent Fan"],
+  },
+  {
+    name: "Aputure MC Pro (4-set)",
+    category: "Lighting",
+    pricePerDay: 300_000,
+    pricePerWeek: 1_700_000,
+    specs: ["RGBWW", "Magnetic", "App Control"],
+  },
+
+  // ── Audio ──
+  {
+    name: "Rode Wireless PRO",
+    category: "Audio",
+    pricePerDay: 200_000,
+    pricePerWeek: 1_100_000,
+    specs: ["Dual Channel", "32-bit Float", "2 Transmitters"],
+    popular: true,
+  },
+  {
+    name: "Sennheiser MKH 416",
+    category: "Audio",
+    pricePerDay: 150_000,
+    pricePerWeek: 800_000,
+    specs: ["Shotgun Mic", "Super-Cardioid", "Industry Standard"],
+  },
+  {
+    name: "Zoom F6 Recorder",
+    category: "Audio",
+    pricePerDay: 200_000,
+    pricePerWeek: 1_100_000,
+    specs: ["6-Channel", "32-bit Float", "Timecode"],
+  },
+  {
+    name: "DPA 4060 Lav (pair)",
+    category: "Audio",
+    pricePerDay: 250_000,
+    pricePerWeek: 1_400_000,
+    specs: ["Omnidirectional", "Low Noise", "Miniature"],
+  },
+
+  // ── Support ──
+  {
+    name: "DJI RS 3 Pro",
+    category: "Support",
+    pricePerDay: 300_000,
+    pricePerWeek: 1_700_000,
+    specs: ["3-Axis Gimbal", "4.5kg Payload", "LiDAR Focus"],
+    popular: true,
+  },
+  {
+    name: "Sachtler Ace XL Tripod",
+    category: "Support",
+    pricePerDay: 100_000,
+    pricePerWeek: 550_000,
+    specs: ["Fluid Head", "75mm Bowl", "8kg Payload"],
+  },
+  {
+    name: "DJI Mavic 3 Pro Drone",
+    category: "Support",
+    pricePerDay: 500_000,
+    pricePerWeek: 2_800_000,
+    specs: ["Hasselblad Cam", "4/3 CMOS", "43min Flight"],
+  },
+  {
+    name: "Slider 120cm Motorized",
+    category: "Support",
+    pricePerDay: 200_000,
+    pricePerWeek: 1_100_000,
+    specs: ["Carbon Fiber", "App Control", "Time-Lapse"],
+  },
+
+  // ── Paket ──
+  {
+    name: "Paket Interview Dasar",
+    category: "Paket",
+    pricePerDay: 1_200_000,
+    pricePerWeek: 6_500_000,
+    specs: ["1 Kamera + Lensa", "2 LED Light", "1 Wireless Mic"],
+  },
+  {
+    name: "Paket Video Pro",
+    category: "Paket",
+    pricePerDay: 3_500_000,
+    pricePerWeek: 18_000_000,
+    specs: ["2 Kamera + Lensa", "3-Point Lighting", "Full Audio Kit"],
+    popular: true,
+  },
+  {
+    name: "Paket Liputan Event",
+    category: "Paket",
+    pricePerDay: 2_500_000,
+    pricePerWeek: 13_000_000,
+    specs: ["2 Kamera", "On-Camera Light", "Wireless Audio"],
+  },
+  {
+    name: "Paket Cinema",
+    category: "Paket",
+    pricePerDay: 8_000_000,
+    pricePerWeek: 42_000_000,
+    specs: ["RED/ARRI Camera", "Cinema Lenses", "Full Grip & Electric"],
+    popular: true,
+  },
+];
