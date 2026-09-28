@@ -52,23 +52,25 @@ function YoutubeIcon({ className }: { className?: string }) {
   );
 }
 
+const SITE_URL = "https://mediavendor-pro.vercel.app";
+
 const footerLinks = [
   {
-    title: "Services",
+    title: "Layanan",
     links: [
-      { label: "Camera Rental", href: "#pricelist-Cameras" },
-      { label: "Lighting Setup", href: "#pricelist-Lighting" },
-      { label: "Audio Equipment", href: "#pricelist-Audio" },
-      { label: "Video Production", href: "#pricelist-Packages" },
+      { label: "Sewa Kamera", href: `${SITE_URL}/#pricelist` },
+      { label: "Peralatan Lighting", href: `${SITE_URL}/#pricelist` },
+      { label: "Peralatan Audio", href: `${SITE_URL}/#pricelist` },
+      { label: "Produksi Video", href: `${SITE_URL}/#pricelist` },
     ],
   },
   {
-    title: "Company",
+    title: "Perusahaan",
     links: [
-      { label: "About Us", href: "#services" },
-      { label: "Portfolio", href: "#portfolio" },
-      { label: "Pricing", href: "#pricelist" },
-      { label: "Contact", href: "#contact" },
+      { label: "Tentang Kami", href: `${SITE_URL}/#services` },
+      { label: "Portfolio", href: `${SITE_URL}/#portfolio` },
+      { label: "Harga", href: `${SITE_URL}/#pricelist` },
+      { label: "Kontak", href: `${SITE_URL}/#contact` },
     ],
   },
 ];
@@ -80,15 +82,15 @@ export default function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <a href="#home" className="mb-4 flex items-center gap-2">
+            <a href={`${SITE_URL}/#home`} className="mb-4 flex items-center gap-2">
               <Camera className="h-6 w-6 text-accent" aria-hidden="true" />
               <span className="font-heading text-lg font-bold tracking-tight text-foreground">
                 MediaVendor<span className="text-accent">Pro</span>
               </span>
             </a>
             <p className="mb-6 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Your trusted partner for premium multimedia equipment rental and
-              professional production services. Dipercaya BUMN &amp; korporat besar.
+              Mitra terpercaya Anda untuk sewa peralatan multimedia premium dan
+              jasa produksi profesional. Dipercaya BUMN &amp; korporat besar.
             </p>
             <div className="flex gap-3">
               <a
@@ -152,7 +154,7 @@ export default function Footer() {
           {/* Contact Info */}
           <div>
             <h3 className="mb-4 font-heading text-sm font-semibold uppercase tracking-wider text-foreground">
-              Contact
+              Kontak
             </h3>
             <ul className="space-y-3">
               <li>

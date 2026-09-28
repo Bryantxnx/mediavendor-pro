@@ -8,12 +8,14 @@ import {
   Camera,
 } from "lucide-react";
 
+const SITE_URL = "https://mediavendor-pro.vercel.app";
+
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Services", href: "#services" },
-  { label: "Portfolio", href: "#portfolio" },
-  { label: "Pricelist", href: "#pricelist" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: `${SITE_URL}/#home` },
+  { label: "Services", href: `${SITE_URL}/#services` },
+  { label: "Portfolio", href: `${SITE_URL}/#portfolio` },
+  { label: "Pricelist", href: `${SITE_URL}/#pricelist` },
+  { label: "Contact", href: `${SITE_URL}/#contact` },
 ];
 
 export default function Navbar() {
@@ -24,7 +26,7 @@ export default function Navbar() {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <a
-          href="#home"
+          href={`${SITE_URL}/#home`}
           className="flex items-center gap-2 text-foreground transition-colors hover:text-accent"
         >
           <Camera className="h-6 w-6 text-accent" aria-hidden="true" />
@@ -49,10 +51,10 @@ export default function Navbar() {
 
         {/* CTA Desktop */}
         <a
-          href="#pricelist"
+          href={`${SITE_URL}/#pricelist`}
           className="hidden rounded-md bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring md:inline-flex"
         >
-          Get Quote
+          Minta Penawaran
         </a>
 
         {/* Mobile Menu Toggle */}
@@ -92,11 +94,11 @@ export default function Navbar() {
           ))}
           <li>
             <a
-              href="#pricelist"
+              href={`${SITE_URL}/#pricelist`}
               className="mt-2 block rounded-md bg-accent px-3 py-2.5 text-center text-sm font-semibold text-accent-foreground transition-all hover:brightness-110"
               onClick={() => setOpen(false)}
             >
-              Get Quote
+              Minta Penawaran
             </a>
           </li>
         </ul>
