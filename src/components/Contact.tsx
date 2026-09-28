@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, type FormEvent } from "react";
+import { motion } from "framer-motion";
 import {
   Mail,
   Phone,
@@ -10,6 +11,7 @@ import {
   CheckCircle,
   MessageCircle,
 } from "lucide-react";
+import { fadeUp, staggerContainer, staggerChild, viewportOnce } from "@/lib/motion";
 
 const GOOGLE_MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Jl.+Oscar+III+Bambu+Apus+Pamulang";
@@ -116,7 +118,13 @@ export default function Contact() {
     <section id="contact" className="scroll-mt-20 bg-card py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-16 text-center">
+        <motion.div
+          className="mb-16 text-center"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+        >
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
             Hubungi Kami
           </p>
@@ -127,7 +135,7 @@ export default function Contact() {
             Ceritakan kebutuhan proyek Anda dan kami akan mengirimkan penawaran
             khusus dalam waktu 24 jam.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid gap-12 lg:grid-cols-5">
           {/* Contact Info */}
@@ -136,7 +144,13 @@ export default function Contact() {
               Informasi Kontak
             </h3>
 
-            <div className="space-y-5">
+            <motion.div
+              className="space-y-5"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewportOnce}
+            >
               {contactInfo.map((info) => {
                 const Icon = info.icon;
                 const isLink = info.href !== "";
@@ -199,7 +213,7 @@ export default function Contact() {
                   </div>
                 );
               })}
-            </div>
+            </motion.div>
 
             {/* Quick CTA */}
             <div className="mt-8 rounded-xl border border-accent/20 bg-accent/5 p-6">

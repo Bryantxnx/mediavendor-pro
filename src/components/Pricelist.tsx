@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   Camera,
@@ -13,6 +14,12 @@ import {
   MessageCircle,
   FileText,
 } from "lucide-react";
+import {
+  fadeUp,
+  staggerContainer,
+  staggerChild,
+  viewportOnce,
+} from "@/lib/motion";
 import {
   rentalCategories,
   priceItems,
@@ -86,7 +93,13 @@ export default function Pricelist() {
     <section id="pricelist" className="scroll-mt-20 bg-background py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-12 text-center">
+        <motion.div
+          className="mb-12 text-center"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+        >
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
             Harga Transparan
           </p>
@@ -97,7 +110,7 @@ export default function Pricelist() {
             Semua harga dalam IDR (Rupiah). Sewa mingguan mendapat diskon
             signifikan. Harga belum termasuk biaya pengiriman dan operator.
           </p>
-        </div>
+        </motion.div>
 
         {/* Category Tabs */}
         <div className="mb-10 flex flex-wrap justify-center gap-2">
@@ -238,12 +251,20 @@ export default function Pricelist() {
         </div>
 
         {/* ── Price Cards — Mobile & Tablet ── */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:hidden">
+        <motion.div
+          className="grid gap-4 sm:grid-cols-2 lg:hidden"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          key={activeCategory}
+        >
           {filtered.map((item) => (
-            <div
+            <motion.div
               key={item.name}
+              variants={staggerChild}
               className={cn(
-                "relative overflow-hidden rounded-xl border border-border/50 bg-card p-5 transition-all hover:border-accent/30",
+                "relative overflow-hidden rounded-xl border border-border/50 bg-card p-5 transition-colors hover:border-accent/30",
                 item.popular &&
                   "border-accent/30 shadow-md shadow-accent/5"
               )}
@@ -326,9 +347,9 @@ export default function Pricelist() {
                   Pesan via Form
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Info Note */}
         <div className="mt-8 flex items-start gap-3 rounded-lg border border-border/50 bg-card p-4">

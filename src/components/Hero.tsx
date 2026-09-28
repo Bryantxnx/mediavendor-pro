@@ -1,4 +1,13 @@
+"use client";
+
 import { Play, ChevronDown, Star, MessageCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  staggerContainer,
+  staggerChild,
+  buttonPress,
+  viewportOnce,
+} from "@/lib/motion";
 
 export default function Hero() {
   return (
@@ -63,34 +72,40 @@ export default function Hero() {
             className="flex flex-col items-center gap-4 sm:flex-row animate-slide-up"
             style={{ animationDelay: "0.3s" }}
           >
-            <a
+            <motion.a
               href="#pricelist"
+              {...buttonPress}
               className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-accent px-8 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               Lihat Daftar Harga
-            </a>
-            <a
+            </motion.a>
+            <motion.a
               href="https://wa.me/6285122979535?text=Halo%20MediaVendor%20Pro%2C%20saya%20ingin%20konsultasi%20tentang%20sewa%20alat%20%2F%20jasa%20produksi."
               target="_blank"
               rel="noopener noreferrer"
+              {...buttonPress}
               className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-emerald-600 px-8 text-sm font-semibold text-white transition-all hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
             >
               <MessageCircle className="h-4 w-4" aria-hidden="true" />
               Konsultasi WhatsApp
-            </a>
-            <a
+            </motion.a>
+            <motion.a
               href="#portfolio"
+              {...buttonPress}
               className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-border bg-muted/50 px-8 text-sm font-medium text-foreground transition-all hover:border-accent/50 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <Play className="h-4 w-4 text-accent" aria-hidden="true" />
               Portofolio Kami
-            </a>
+            </motion.a>
           </div>
 
           {/* Stats */}
-          <div
-            className="mt-16 grid w-full max-w-2xl grid-cols-2 gap-4 sm:grid-cols-4 animate-slide-up"
-            style={{ animationDelay: "0.45s" }}
+          <motion.div
+            className="mt-16 grid w-full max-w-2xl grid-cols-2 gap-4 sm:grid-cols-4"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOnce}
           >
             {[
               { value: "500+", label: "Proyek" },
@@ -98,8 +113,9 @@ export default function Hero() {
               { value: "8+", label: "Tahun" },
               { value: "4.9", label: "Rating" },
             ].map((stat) => (
-              <div
+              <motion.div
                 key={stat.label}
+                variants={staggerChild}
                 className="flex flex-col items-center rounded-lg border border-border/50 bg-card/50 px-4 py-4 backdrop-blur-sm"
               >
                 <span className="font-heading text-2xl font-bold text-accent sm:text-3xl">
@@ -108,9 +124,9 @@ export default function Hero() {
                 <span className="mt-1 text-xs font-medium text-muted-foreground">
                   {stat.label}
                 </span>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
 

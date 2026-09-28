@@ -9,6 +9,14 @@ import {
   Users,
   ArrowRight,
 } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  fadeUp,
+  staggerContainer,
+  staggerChild,
+  hoverTap,
+  viewportOnce,
+} from "@/lib/motion";
 
 const services = [
   {
@@ -66,7 +74,13 @@ export default function Services() {
     <section id="services" className="scroll-mt-20 bg-background py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-16 text-center">
+        <motion.div
+          className="mb-16 text-center"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+        >
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
             Layanan Kami
           </p>
@@ -77,16 +91,24 @@ export default function Services() {
             Dari sewa peralatan satuan hingga manajemen produksi skala besar,
             kami menangani setiap aspek kebutuhan multimedia Anda.
           </p>
-        </div>
+        </motion.div>
 
         {/* Service Cards */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+        >
           {services.map((service) => {
             const Icon = service.icon;
             return (
-              <div
+              <motion.div
                 key={service.title}
-                className="group relative rounded-xl border border-border/50 bg-card p-6 transition-all duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
+                variants={staggerChild}
+                {...hoverTap}
+                className="group relative rounded-xl border border-border/50 bg-card p-6 transition-colors duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
               >
                 {/* Icon */}
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors group-hover:bg-accent/20">
@@ -126,10 +148,10 @@ export default function Services() {
                     aria-hidden="true"
                   />
                 </a>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

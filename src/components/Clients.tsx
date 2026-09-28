@@ -1,6 +1,8 @@
 "use client";
 
 import { clients } from "@/data/portfolio";
+import { motion } from "framer-motion";
+import { fadeUp, viewportOnce } from "@/lib/motion";
 
 /* ── Component ── */
 
@@ -9,9 +11,15 @@ export default function Clients() {
     <section className="border-y border-border/30 bg-card/50 py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Label */}
-        <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <motion.p
+          className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+        >
           Dipercaya oleh Korporat &amp; Instansi Pemerintah
-        </p>
+        </motion.p>
 
         {/* Marquee container */}
         <div className="relative overflow-hidden">
