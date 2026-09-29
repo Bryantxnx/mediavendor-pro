@@ -55,15 +55,20 @@ export async function POST(request: NextRequest) {
 
     if (existingCustomer) {
       customerId = existingCustomer.id;
-      // Update name and email if provided (customer may use new email)
-      const custUpdates: Record<string, string> = {};
-      if (customer.name) custUpdates.name = customer.name;
-      if (customer.email) custUpdates.email = customer.email;
-      if (Object.keys(custUpdates).length > 0) {
-        await supabase
+      // Don't overwrite name — different people may share the same WA number.
+      // Only update email if customer record has none yet.
+      if (customer.email) {
+        const { data: full } = await supabase
           .from("customers")
-          .update(custUpdates)
-          .eq("id", existingCustomer.id);
+          .select("email")
+          .eq("id", existingCustomer.id)
+          .single();
+        if (full && !full.email) {
+          await supabase
+            .from("customers")
+            .update({ email: customer.email })
+            .eq("id", existingCustomer.id);
+        }
       }
     } else {
       const { data: newCustomer, error: custErr } = await supabase
@@ -95,6 +100,8 @@ export async function POST(request: NextRequest) {
       .insert({
         customer_id: customerId,
         order_number: orderNumber,
+        customer_name: customer.name,
+        customer_email: customer.email || null,
         status: orderStatus,
         payment_method,
         payment_status: "unpaid",

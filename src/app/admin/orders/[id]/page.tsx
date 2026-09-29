@@ -250,9 +250,9 @@ export default function OrderDetailPage() {
         totalAfterDiscount: order.total_amount,
         discountPct: order.discount_pct,
         discountLabel: order.discount_pct > 0 ? `Diskon ${order.discount_pct}%` : "",
-        customerName: order.customers?.name,
+        customerName: order.customer_name ?? order.customers?.name,
         customerPhone: order.customers?.whatsapp,
-        customerEmail: order.customers?.email || undefined,
+        customerEmail: order.customer_email ?? order.customers?.email || undefined,
         orderNumber: order.order_number,
         isPaid: isPaid ?? order.payment_status === "paid",
         orderDate: order.created_at,
@@ -568,7 +568,7 @@ export default function OrderDetailPage() {
               <div>
                 <p className="text-xs font-medium text-gray-500">Nama</p>
                 <p className="mt-0.5 text-sm font-medium text-white">
-                  {order.customers?.name ?? "-"}
+                  {order.customer_name ?? order.customers?.name ?? "-"}
                 </p>
               </div>
 

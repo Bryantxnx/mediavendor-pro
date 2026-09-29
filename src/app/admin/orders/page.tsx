@@ -24,6 +24,8 @@ interface Order {
   id: string;
   order_number: string;
   customer_id: string;
+  customer_name: string | null;
+  customer_email: string | null;
   status:
     | "pending"
     | "waiting_payment"
@@ -283,7 +285,7 @@ export default function OrdersPage() {
                       <td className="whitespace-nowrap px-4 py-3">
                         <div>
                           <p className="font-medium text-white">
-                            {order.customers?.name ?? "-"}
+                            {order.customer_name ?? order.customers?.name ?? "-"}
                           </p>
                           <p className="text-xs text-gray-500">
                             {order.customers?.whatsapp ?? "-"}
@@ -383,7 +385,7 @@ export default function OrdersPage() {
                   {/* Customer */}
                   <div className="mt-2 flex items-center gap-2 text-sm">
                     <span className="text-gray-300">
-                      {order.customers?.name ?? "-"}
+                      {order.customer_name ?? order.customers?.name ?? "-"}
                     </span>
                     <span className="text-gray-600">|</span>
                     <span className="text-gray-500">
