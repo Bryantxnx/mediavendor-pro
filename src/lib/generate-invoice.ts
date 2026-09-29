@@ -20,6 +20,12 @@ export interface InvoiceData {
   totalAfterDiscount: number;
   discountPct: number;
   discountLabel: string;
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  orderNumber?: string;
+  isPaid?: boolean;
+  orderDate?: string | Date;
 }
 
 /* ── Helpers ── */
@@ -82,8 +88,8 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   const doc = new jsPDF("p", "mm", "a4");
   const pw = 210;
   const mx = 15;
-  const inv = makeInvoiceNo();
-  const today = new Date();
+  const inv = data.orderNumber || makeInvoiceNo();
+  const today = data.orderDate ? new Date(data.orderDate) : new Date();
   const isWeekly = data.days >= 7;
 
   // ═══════════════════════════════════════
@@ -134,6 +140,25 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   doc.setFont("helvetica", "normal");
   doc.text(fmtDate(today), pw - mx - 2, 32, { align: "right" });
 
+  // Sleek status indicator in header
+  if (data.isPaid !== undefined) {
+    if (data.isPaid) {
+      doc.setFillColor(34, 197, 94); // emerald-500
+      doc.roundedRect(pw - mx - 26, 34.5, 26, 5, 1, 1, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      doc.text("LUNAS", pw - mx - 13, 38.2, { align: "center" });
+    } else {
+      doc.setFillColor(239, 68, 68); // red-500
+      doc.roundedRect(pw - mx - 34, 34.5, 34, 5, 1, 1, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      doc.text("BELUM LUNAS", pw - mx - 17, 38.2, { align: "center" });
+    }
+  }
+
   // ═══════════════════════════════════════
   // 2. ADDRESS SECTION
   // ═══════════════════════════════════════
@@ -145,12 +170,22 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   doc.setTextColor(...DARK);
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text("Customer / Klien", mx, y + 12);
+  doc.text(data.customerName || "Customer / Klien", mx, y + 12);
   doc.setTextColor(...GRAY);
   doc.setFontSize(8.5);
   doc.setFont("helvetica", "normal");
-  doc.text("Pemesanan via website MediaVendor Pro", mx, y + 17);
-  doc.text(`Tanggal order: ${fmtDate(today)}`, mx, y + 21.5);
+  if (data.customerPhone) {
+    doc.text(`WhatsApp: ${data.customerPhone}`, mx, y + 17);
+    if (data.customerEmail) {
+      doc.text(`Email: ${data.customerEmail}`, mx, y + 21.5);
+      doc.text(`Tanggal order: ${fmtDate(today)}`, mx, y + 26);
+    } else {
+      doc.text(`Tanggal order: ${fmtDate(today)}`, mx, y + 21.5);
+    }
+  } else {
+    doc.text("Pemesanan via website MediaVendor Pro", mx, y + 17);
+    doc.text(`Tanggal order: ${fmtDate(today)}`, mx, y + 21.5);
+  }
 
   // --- Right: Dari ---
   drawBadge(doc, colR, y, "DARI");
@@ -365,10 +400,13 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   doc.setDrawColor(...DARK);
   doc.setLineWidth(0.3);
   doc.line(sigCenterX - 30, tY + 2, sigCenterX + 30, tY + 2);
-  doc.setFontSize(7);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(...GRAY);
-  doc.text("AUTHORIZED", sigCenterX, tY + 7, { align: "center" });
+  if (data.isPaid) {
+    doc.setTextColor(34, 197, 94);
+    doc.text("PAID / VERIFIED", sigCenterX, tY + 7, { align: "center" });
+  } else {
+    doc.setTextColor(...GRAY);
+    doc.text("AUTHORIZED", sigCenterX, tY + 7, { align: "center" });
+  }
 
   // ═══════════════════════════════════════
   // 6. FOOTER BARS
@@ -389,5 +427,11 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   // ═══════════════════════════════════════
   // SAVE / DOWNLOAD
   // ═══════════════════════════════════════
-  doc.save(`Invoice_MediaVendorPro_${inv}.pdf`);
+  const statusSuffix =
+    data.isPaid === true
+      ? "_LUNAS"
+      : data.isPaid === false
+        ? "_BELUM_LUNAS"
+        : "";
+  doc.save(`Invoice_MediaVendorPro_${inv}${statusSuffix}.pdf`);
 }

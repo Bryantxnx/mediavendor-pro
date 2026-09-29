@@ -17,6 +17,7 @@ import {
   CheckCircle,
   Download,
 } from "lucide-react";
+import { generateInvoicePDF } from "@/lib/generate-invoice";
 
 /* ── Types ────────────────────────────────────────────────── */
 
@@ -233,188 +234,29 @@ export default function OrderDetailPage() {
     if (!order) return;
     setDownloadingInvoice(true);
     try {
-      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
-        import("jspdf"),
-        import("jspdf-autotable"),
-      ]);
-
-      const doc = new jsPDF("p", "mm", "a4");
-      const pw = 210;
-      const mx = 15;
-      const paid = isPaid ?? order.payment_status === "paid";
-      const NAVY: [number, number, number] = [23, 34, 48];
-      const AMBER: [number, number, number] = [245, 158, 11];
-      const WHITE: [number, number, number] = [255, 255, 255];
-      const DARK: [number, number, number] = [17, 24, 39];
-      const GRAY: [number, number, number] = [75, 85, 99];
-      const SLATE: [number, number, number] = [148, 163, 184];
-      const FAINT: [number, number, number] = [248, 250, 252];
-      const BORDER: [number, number, number] = [226, 232, 240];
-      const GREEN: [number, number, number] = [34, 197, 94];
-
-      const fmt = (n: number) => new Intl.NumberFormat("id-ID").format(n);
-      const fmtDate = (d: Date) => d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
-
-      // ── Header
-      doc.setFillColor(...NAVY);
-      doc.rect(0, 0, pw, 42, "F");
-      doc.setFillColor(...AMBER);
-      doc.rect(0, 0, pw, 1.5, "F");
-      doc.setFillColor(...AMBER);
-      doc.rect(0, 37.5, pw * 0.48, 4.5, "F");
-
-      doc.setTextColor(...WHITE);
-      doc.setFontSize(20);
-      doc.setFont("helvetica", "bold");
-      doc.text("MEDIA VENDOR", mx + 2, 16);
-      doc.setFontSize(9.5);
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(226, 232, 240);
-      doc.text("PRO ENTERPRISE", mx + 2, 23);
-      doc.setTextColor(...SLATE);
-      doc.setFontSize(6.5);
-      doc.text("Premium Production & Broadcast Solutions", mx + 2, 29);
-
-      doc.setTextColor(...AMBER);
-      doc.setFontSize(30);
-      doc.setFont("helvetica", "bold");
-      doc.text("INVOICE", pw - mx - 2, 17, { align: "right" });
-      doc.setTextColor(...WHITE);
-      doc.setFontSize(9);
-      doc.text(`ID NO : ${order.order_number}`, pw - mx - 2, 25, { align: "right" });
-      doc.setTextColor(...SLATE);
-      doc.setFontSize(8);
-      doc.setFont("helvetica", "normal");
-      doc.text(fmtDate(new Date(order.created_at)), pw - mx - 2, 32, { align: "right" });
-
-      // ── Status badge
-      let y = 48;
-      if (paid) {
-        doc.setFillColor(...GREEN);
-        doc.roundedRect(pw - mx - 50, y - 5, 50, 10, 2, 2, "F");
-        doc.setTextColor(...WHITE);
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        doc.text("LUNAS", pw - mx - 25, y + 1.5, { align: "center" });
-      } else {
-        doc.setFillColor(239, 68, 68);
-        doc.roundedRect(pw - mx - 55, y - 5, 55, 10, 2, 2, "F");
-        doc.setTextColor(...WHITE);
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        doc.text("BELUM LUNAS", pw - mx - 27.5, y + 1.5, { align: "center" });
-      }
-
-      // ── Customer info
-      y = 48;
-      doc.setFillColor(...AMBER);
-      doc.rect(mx, y, 3, 6.5, "F");
-      doc.setFillColor(...NAVY);
-      doc.rect(mx + 3, y, 60, 6.5, "F");
-      doc.setTextColor(...WHITE);
-      doc.setFontSize(7);
-      doc.setFont("helvetica", "bold");
-      doc.text("DITAGIHKAN KEPADA", mx + 7, y + 4.5);
-
-      doc.setTextColor(...DARK);
-      doc.setFontSize(11);
-      doc.setFont("helvetica", "bold");
-      doc.text(order.customers?.name ?? "Customer", mx, y + 12);
-      doc.setTextColor(...GRAY);
-      doc.setFontSize(8.5);
-      doc.setFont("helvetica", "normal");
-      if (order.customers?.whatsapp) doc.text(`WA: ${order.customers.whatsapp}`, mx, y + 17);
-      if (order.customers?.email) doc.text(`Email: ${order.customers.email}`, mx, y + 21.5);
-
-      // ── Items table
-      y += 30;
-      const isWeekly = order.rental_days >= 7;
-      const rateLabel = isWeekly ? "Tarif/Minggu" : "Tarif/Hari";
-
-      const rows = items.map((item, idx) => [
-        String(idx + 1),
-        item.product_name,
-        String(item.quantity),
-        `Rp ${fmt(item.unit_price)}`,
-        `Rp ${fmt(item.subtotal)}`,
-      ]);
-
-      autoTable(doc, {
-        startY: y,
-        head: [["No", "Deskripsi Unit & Layanan", "Jumlah", rateLabel, "Subtotal"]],
-        body: rows,
-        theme: "plain",
-        styles: { font: "helvetica", fontSize: 9, cellPadding: { top: 3.5, bottom: 3.5, left: 4, right: 4 }, textColor: DARK, lineColor: BORDER, lineWidth: 0.2 },
-        headStyles: { fillColor: AMBER, textColor: WHITE, fontStyle: "bold", fontSize: 8.5, halign: "left" },
-        columnStyles: {
-          0: { halign: "center", cellWidth: 12 },
-          1: { cellWidth: "auto", fontStyle: "bold" },
-          2: { halign: "center", cellWidth: 24 },
-          3: { halign: "right", cellWidth: 30 },
-          4: { halign: "right", cellWidth: 32, fontStyle: "bold" },
-        },
-        alternateRowStyles: { fillColor: FAINT },
-        margin: { left: mx, right: mx },
+      await generateInvoicePDF({
+        items: items.map((it) => ({
+          item: {
+            name: it.product_name,
+            category: "Kamera",
+            pricePerDay: it.unit_price,
+            pricePerWeek: it.unit_price,
+            specs: [],
+          },
+          qty: it.quantity,
+        })),
+        days: order.rental_days,
+        totalBeforeDiscount: subtotal,
+        totalAfterDiscount: order.total_amount,
+        discountPct: order.discount_pct,
+        discountLabel: order.discount_pct > 0 ? `Diskon ${order.discount_pct}%` : "",
+        customerName: order.customers?.name,
+        customerPhone: order.customers?.whatsapp,
+        customerEmail: order.customers?.email || undefined,
+        orderNumber: order.order_number,
+        isPaid: isPaid ?? order.payment_status === "paid",
+        orderDate: order.created_at,
       });
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const tblFinalY = (doc as any).lastAutoTable?.finalY ?? y + 50;
-      y = tblFinalY + 12;
-
-      // ── Totals
-      const totW = 80;
-      const totX = pw - mx - totW;
-      doc.setFillColor(...FAINT);
-      doc.setDrawColor(...BORDER);
-      doc.roundedRect(totX, y - 3, totW, order.discount_pct > 0 ? 40 : 32, 2, 2, "FD");
-
-      let tY = y + 4;
-      doc.setFontSize(9.5);
-
-      doc.setTextColor(...GRAY);
-      doc.setFont("helvetica", "normal");
-      doc.text("Subtotal", totX + 4, tY);
-      doc.setTextColor(...DARK);
-      doc.setFont("helvetica", "bold");
-      doc.text(`Rp ${fmt(subtotal)}`, totX + totW - 4, tY, { align: "right" });
-      tY += 6;
-
-      if (order.discount_pct > 0) {
-        doc.setTextColor(...GRAY);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Diskon (${order.discount_pct}%)`, totX + 4, tY);
-        doc.setTextColor(239, 68, 68);
-        doc.setFont("helvetica", "bold");
-        doc.text(`- Rp ${fmt(discountAmount)}`, totX + totW - 4, tY, { align: "right" });
-        tY += 6;
-      }
-
-      doc.setTextColor(...GRAY);
-      doc.setFont("helvetica", "normal");
-      doc.text(`Durasi: ${order.rental_days} hari`, totX + 4, tY);
-      tY += 8;
-
-      doc.setFillColor(...AMBER);
-      doc.roundedRect(totX, tY - 4, totW, 13, 1.5, 1.5, "F");
-      doc.setTextColor(...WHITE);
-      doc.setFontSize(9);
-      doc.setFont("helvetica", "bold");
-      doc.text("TOTAL", totX + 4, tY + 4.5);
-      doc.setFontSize(14);
-      doc.text(`Rp ${fmt(order.total_amount)}`, totX + totW - 4, tY + 5, { align: "right" });
-
-      // ── Footer
-      doc.setFillColor(...AMBER);
-      doc.rect(0, 290, pw * 0.5, 7, "F");
-      doc.setFillColor(...NAVY);
-      doc.rect(pw * 0.54, 290, pw * 0.46, 7, "F");
-      doc.setTextColor(...WHITE);
-      doc.setFontSize(6.5);
-      doc.setFont("helvetica", "normal");
-      doc.text("mediavendorpro.id", pw * 0.77, 294.5, { align: "center" });
-
-      const statusLabel = paid ? "LUNAS" : "BELUM_LUNAS";
-      doc.save(`Invoice_${order.order_number}_${statusLabel}.pdf`);
     } catch (err) {
       console.error("Invoice PDF error:", err);
       setToast({ message: "Gagal generate invoice PDF.", type: "error" });
