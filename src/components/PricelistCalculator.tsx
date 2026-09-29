@@ -1024,22 +1024,20 @@ export default function PricelistCalculator() {
                     />
                   </div>
 
-                  {/* Email — only for midtrans */}
-                  {checkoutMode === "midtrans" && (
-                    <div>
-                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                        Email <span className="text-muted-foreground/50">(opsional)</span>
-                      </label>
-                      <input
-                        type="email"
-                        value={customerEmail}
-                        onChange={(e) => setCustomerEmail(e.target.value)}
-                        placeholder="email@contoh.com"
-                        className="w-full rounded-lg border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                  )}
+                  {/* Email */}
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      Email <span className="text-muted-foreground/50">(untuk invoice & notifikasi)</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      placeholder="email@contoh.com"
+                      className="w-full rounded-lg border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                      disabled={isSubmitting}
+                    />
+                  </div>
 
                   {/* Tanggal Sewa */}
                   <div className="grid grid-cols-2 gap-3">

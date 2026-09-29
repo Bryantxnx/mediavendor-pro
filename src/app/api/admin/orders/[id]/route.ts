@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { generateServerInvoicePDF } from "@/lib/generate-invoice-server";
+import { sendPaymentConfirmationEmail } from "@/lib/resend";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -104,6 +106,60 @@ export async function PUT(
         );
       }
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // ── Send email notification when payment marked as paid ──
+    if (body.payment_status === "paid") {
+      try {
+        // Fetch full order with customer + items for email
+        const { data: fullOrder } = await supabase
+          .from("orders")
+          .select(`
+            *,
+            customers ( id, name, phone, email, whatsapp ),
+            order_items ( id, product_name, quantity, unit_price, subtotal )
+          `)
+          .eq("id", id)
+          .single();
+
+        const customerEmail = fullOrder?.customers?.email;
+        if (customerEmail && fullOrder) {
+          // Generate PDF attachment
+          const pdfBuffer = await generateServerInvoicePDF({
+            items: fullOrder.order_items,
+            days: fullOrder.rental_days,
+            totalAmount: fullOrder.total_amount,
+            discountPct: fullOrder.discount_pct ?? 0,
+            customerName: fullOrder.customers?.name,
+            customerPhone: fullOrder.customers?.whatsapp,
+            customerEmail: customerEmail,
+            orderNumber: fullOrder.order_number,
+            isPaid: true,
+            orderDate: fullOrder.created_at,
+            rentalStartDate: fullOrder.rental_start_date,
+            rentalEndDate: fullOrder.rental_end_date,
+          });
+
+          // Send email
+          await sendPaymentConfirmationEmail({
+            to: customerEmail,
+            customerName: fullOrder.customers?.name ?? "Customer",
+            orderNumber: fullOrder.order_number,
+            orderItems: fullOrder.order_items,
+            totalAmount: fullOrder.total_amount,
+            rentalDays: fullOrder.rental_days,
+            discountPct: fullOrder.discount_pct ?? 0,
+            rentalStartDate: fullOrder.rental_start_date,
+            rentalEndDate: fullOrder.rental_end_date,
+            pdfBuffer,
+          });
+
+          console.log(`Payment confirmation email sent to ${customerEmail} for order ${fullOrder.order_number}`);
+        }
+      } catch (emailErr) {
+        // Email failure should NOT block the status update — log and continue
+        console.error("Failed to send payment confirmation email:", emailErr);
+      }
     }
 
     return NextResponse.json(data);
