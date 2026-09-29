@@ -16,7 +16,7 @@ function generateOrderNumber(): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { customer, items, rental_days, total_amount, discount_pct, payment_method } = body;
+    const { customer, items, rental_days, rental_start, rental_end, total_amount, discount_pct, payment_method } = body;
 
     // ── Validate required fields ──
     const missing: string[] = [];
@@ -89,6 +89,8 @@ export async function POST(request: NextRequest) {
         payment_method,
         payment_status: "unpaid",
         rental_days,
+        rental_start_date: rental_start || null,
+        rental_end_date: rental_end || null,
         total_amount,
         discount_pct: discount_pct ?? 0,
         notes: body.notes || null,

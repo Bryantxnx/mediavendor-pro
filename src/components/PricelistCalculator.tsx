@@ -77,7 +77,9 @@ function buildWhatsAppUrl(
   days: number,
   totalAfterDiscount: number,
   savings: number,
-  discount: { pct: number; label: string }
+  discount: { pct: number; label: string },
+  rentalStart?: string,
+  rentalEnd?: string
 ): string {
   if (selectedItems.length === 0) return "#";
   const discountLine =
@@ -86,6 +88,10 @@ function buildWhatsAppUrl(
       : days >= 7
         ? "(tarif mingguan)"
         : "";
+
+  const fmtTgl = (d: string) =>
+    new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
   const lines = [
     "Halo MediaVendor Pro, saya ingin sewa peralatan berikut:",
     "",
@@ -100,7 +106,7 @@ function buildWhatsAppUrl(
     ...(savings > 0 ? [`Hemat: Rp ${formatPrice(savings)}`] : []),
     "",
     "Detail kebutuhan:",
-    "- Tanggal sewa: ",
+    `- Tanggal sewa: ${rentalStart ? fmtTgl(rentalStart) : ""}${rentalEnd ? ` s/d ${fmtTgl(rentalEnd)}` : ""}`,
     "- Lokasi: ",
   ];
   return buildWaUrl(lines.join("\n"));
@@ -323,6 +329,8 @@ export default function PricelistCalculator() {
   const [customerName, setCustomerName] = useState("");
   const [customerWhatsapp, setCustomerWhatsapp] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
+  const [rentalStart, setRentalStart] = useState("");
+  const [rentalEnd, setRentalEnd] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
 
@@ -358,6 +366,18 @@ export default function PricelistCalculator() {
   }, []);
 
   const filtered = products.filter((i) => i.category === activeCategory);
+
+  // Auto-calculate rental end date when start date or duration changes
+  useEffect(() => {
+    if (rentalStart) {
+      const start = new Date(rentalStart);
+      start.setDate(start.getDate() + days - 1);
+      setRentalEnd(start.toISOString().split("T")[0]);
+    }
+  }, [rentalStart, days]);
+
+  // Min date = today (YYYY-MM-DD)
+  const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
 
   function toggle(name: string) {
     setQuantities((prev) => {
@@ -428,9 +448,11 @@ export default function PricelistCalculator() {
         days,
         totalAfterDiscount,
         savings,
-        discount
+        discount,
+        rentalStart,
+        rentalEnd
       ),
-    [selectedItems, quantities, days, totalAfterDiscount, savings, discount]
+    [selectedItems, quantities, days, totalAfterDiscount, savings, discount, rentalStart, rentalEnd]
   );
 
   // Open checkout modal — user picks payment method
@@ -441,7 +463,7 @@ export default function PricelistCalculator() {
 
   // Submit order to API
   async function submitOrder() {
-    if (!customerName.trim() || !customerWhatsapp.trim()) return;
+    if (!customerName.trim() || !customerWhatsapp.trim() || !rentalStart) return;
     setIsSubmitting(true);
 
     try {
@@ -463,6 +485,8 @@ export default function PricelistCalculator() {
           },
           items: orderItems,
           rental_days: days,
+          rental_start: rentalStart,
+          rental_end: rentalEnd,
           total_amount: totalAfterDiscount,
           discount_pct: discount.pct,
           payment_method: checkoutMode,
@@ -1016,6 +1040,36 @@ export default function PricelistCalculator() {
                       />
                     </div>
                   )}
+
+                  {/* Tanggal Sewa */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                        Tanggal Mulai <span className="text-red-400">*</span>
+                      </label>
+                      <input
+                        type="date"
+                        value={rentalStart}
+                        onChange={(e) => setRentalStart(e.target.value)}
+                        min={todayStr}
+                        className="w-full rounded-lg border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent [color-scheme:dark]"
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                        Tanggal Selesai
+                      </label>
+                      <input
+                        type="date"
+                        value={rentalEnd}
+                        min={rentalStart || todayStr}
+                        className="w-full rounded-lg border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent [color-scheme:dark] disabled:opacity-50"
+                        disabled
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Order summary */}
@@ -1041,7 +1095,7 @@ export default function PricelistCalculator() {
                   <button
                     type="button"
                     onClick={submitOrder}
-                    disabled={isSubmitting || !customerName.trim() || !customerWhatsapp.trim()}
+                    disabled={isSubmitting || !customerName.trim() || !customerWhatsapp.trim() || !rentalStart}
                     className={cn(
                       "flex-1 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
                       checkoutMode === "midtrans"
