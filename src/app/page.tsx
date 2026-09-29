@@ -4,6 +4,7 @@ import Clients from "@/components/Clients";
 import Services from "@/components/Services";
 import Portfolio from "@/components/Portfolio";
 import Pricelist from "@/components/Pricelist";
+import RentalCalculator from "@/components/RentalCalculator";
 import RentalGuide from "@/components/RentalGuide";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -19,6 +20,7 @@ export default function Home() {
         <Services />
         <Portfolio />
         <Pricelist />
+        <RentalCalculator />
         <RentalGuide />
         <Contact />
       </main>
