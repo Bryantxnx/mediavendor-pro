@@ -55,6 +55,16 @@ export async function POST(request: NextRequest) {
 
     if (existingCustomer) {
       customerId = existingCustomer.id;
+      // Update name and email if provided (customer may use new email)
+      const custUpdates: Record<string, string> = {};
+      if (customer.name) custUpdates.name = customer.name;
+      if (customer.email) custUpdates.email = customer.email;
+      if (Object.keys(custUpdates).length > 0) {
+        await supabase
+          .from("customers")
+          .update(custUpdates)
+          .eq("id", existingCustomer.id);
+      }
     } else {
       const { data: newCustomer, error: custErr } = await supabase
         .from("customers")
