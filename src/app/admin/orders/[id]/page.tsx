@@ -252,7 +252,7 @@ export default function OrderDetailPage() {
         discountLabel: order.discount_pct > 0 ? `Diskon ${order.discount_pct}%` : "",
         customerName: order.customer_name ?? order.customers?.name,
         customerPhone: order.customers?.whatsapp,
-        customerEmail: order.customer_email ?? order.customers?.email || undefined,
+        customerEmail: (order.customer_email ?? order.customers?.email) || undefined,
         orderNumber: order.order_number,
         isPaid: isPaid ?? order.payment_status === "paid",
         orderDate: order.created_at,
