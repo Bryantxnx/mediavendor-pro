@@ -194,10 +194,17 @@ export default function Services() {
                 </div>
 
                 {/* Bottom — CTA link */}
-                <a
-                  href={`#pricelist-${service.pricelistTab}`}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById("pricelist");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                    setTimeout(() => {
+                      window.location.hash = `pricelist-${service.pricelistTab}`;
+                    }, 100);
+                  }}
                   className={cn(
-                    "inline-flex items-center gap-1 font-medium text-accent transition-colors hover:text-accent/80",
+                    "inline-flex items-center gap-1 font-medium text-accent transition-colors hover:text-accent/80 cursor-pointer",
                     service.hero ? "text-sm" : "text-xs"
                   )}
                 >
@@ -206,7 +213,7 @@ export default function Services() {
                     className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1"
                     aria-hidden="true"
                   />
-                </a>
+                </button>
 
                 {/* Subtle bottom border glow on hover */}
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
