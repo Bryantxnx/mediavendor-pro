@@ -140,22 +140,23 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   doc.setFont("helvetica", "normal");
   doc.text(fmtDate(today), pw - mx - 2, 32, { align: "right" });
 
-  // Sleek status indicator in header
+  // Status badge in header — big & prominent
   if (data.isPaid !== undefined) {
+    const badgeY = 34;
     if (data.isPaid) {
-      doc.setFillColor(34, 197, 94); // emerald-500
-      doc.roundedRect(pw - mx - 26, 34.5, 26, 5, 1, 1, "F");
+      doc.setFillColor(34, 197, 94);
+      doc.roundedRect(pw - mx - 38, badgeY, 38, 7.5, 1.5, 1.5, "F");
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(7);
+      doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
-      doc.text("LUNAS", pw - mx - 13, 38.2, { align: "center" });
+      doc.text("LUNAS", pw - mx - 19, badgeY + 5.5, { align: "center" });
     } else {
-      doc.setFillColor(239, 68, 68); // red-500
-      doc.roundedRect(pw - mx - 34, 34.5, 34, 5, 1, 1, "F");
+      doc.setFillColor(239, 68, 68);
+      doc.roundedRect(pw - mx - 46, badgeY, 46, 7.5, 1.5, 1.5, "F");
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(7);
+      doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
-      doc.text("BELUM LUNAS", pw - mx - 17, 38.2, { align: "center" });
+      doc.text("BELUM LUNAS", pw - mx - 23, badgeY + 5.5, { align: "center" });
     }
   }
 
@@ -199,6 +200,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   doc.text("Broadcast & Cinema Equipment Rental", colR, y + 17);
   doc.text(`Phone: ${siteConfig.phoneFormatted}`, colR, y + 21.5);
   doc.text(`Email: ${siteConfig.email}`, colR, y + 26);
+  doc.text("Jakarta, Indonesia", colR, y + 30.5);
 
   // ═══════════════════════════════════════
   // 3. SCOPE BAR
@@ -310,12 +312,12 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   // Notes
   pyL += 6;
   doc.setTextColor(...DARK);
-  doc.setFontSize(9);
+  doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
   doc.text("Catatan Penting", mx, pyL);
-  pyL += 5;
+  pyL += 5.5;
   doc.setTextColor(...GRAY);
-  doc.setFontSize(7.5);
+  doc.setFontSize(8.5);
   doc.setFont("helvetica", "normal");
   const notes = [
     "1. Ini adalah estimasi harga. Harga final dikonfirmasi via WhatsApp.",
@@ -324,7 +326,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   ];
   notes.forEach((n) => {
     doc.text(n, mx, pyL);
-    pyL += 4;
+    pyL += 4.5;
   });
 
   // --- Right column: Totals ---
@@ -400,6 +402,8 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   doc.setDrawColor(...DARK);
   doc.setLineWidth(0.3);
   doc.line(sigCenterX - 30, tY + 2, sigCenterX + 30, tY + 2);
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "bold");
   if (data.isPaid) {
     doc.setTextColor(34, 197, 94);
     doc.text("PAID / VERIFIED", sigCenterX, tY + 7, { align: "center" });
@@ -409,18 +413,24 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   }
 
   // ═══════════════════════════════════════
-  // 6. FOOTER BARS
+  // 6. FOOTER BARS — dynamic position
   // ═══════════════════════════════════════
+  const contentBottom = Math.max(pyL, tY + 12);
+  const pageH = 297; // A4 height in mm
+  const footerH = 7;
+  // Footer sits at bottom of page, but at least 10mm below content
+  const footerY = Math.max(contentBottom + 10, pageH - footerH);
+
   doc.setFillColor(...AMBER);
-  doc.rect(0, 290, pw * 0.5, 7, "F");
+  doc.rect(0, footerY, pw * 0.5, footerH, "F");
   doc.setFillColor(...NAVY);
-  doc.rect(pw * 0.54, 290, pw * 0.46, 7, "F");
+  doc.rect(pw * 0.54, footerY, pw * 0.46, footerH, "F");
 
   // Footer text
   doc.setTextColor(...WHITE);
   doc.setFontSize(6.5);
   doc.setFont("helvetica", "normal");
-  doc.text("mediavendorpro.id", pw * 0.77, 294.5, {
+  doc.text("mediavendorpro.id", pw * 0.77, footerY + 4.5, {
     align: "center",
   });
 
