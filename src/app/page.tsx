@@ -3,8 +3,7 @@ import Hero from "@/components/Hero";
 import Clients from "@/components/Clients";
 import Services from "@/components/Services";
 import Portfolio from "@/components/Portfolio";
-import Pricelist from "@/components/Pricelist";
-import RentalCalculator from "@/components/RentalCalculator";
+import PricelistCalculator from "@/components/PricelistCalculator";
 import RentalGuide from "@/components/RentalGuide";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -19,8 +18,7 @@ export default function Home() {
         <Clients />
         <Services />
         <Portfolio />
-        <Pricelist />
-        <RentalCalculator />
+        <PricelistCalculator />
         <RentalGuide />
         <Contact />
       </main>
