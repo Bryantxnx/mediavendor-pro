@@ -33,6 +33,15 @@ function fmt(n: number): string {
   return new Intl.NumberFormat("id-ID").format(n);
 }
 
+function toTitleCase(str: string): string {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
 function makeInvoiceNo(): string {
   const d = new Date();
   const stamp = [
@@ -171,7 +180,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
   doc.setTextColor(...DARK);
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text(data.customerName || "Customer / Klien", mx, y + 12);
+  doc.text(data.customerName ? `Yth. ${toTitleCase(data.customerName)}` : "Customer / Klien", mx, y + 12);
   doc.setTextColor(...GRAY);
   doc.setFontSize(8.5);
   doc.setFont("helvetica", "normal");
