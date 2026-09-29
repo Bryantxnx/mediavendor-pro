@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 /* ── Public API: Fetch active products for landing page ──
  *  Pake anon key (browser client) — RLS policy hanya return is_active = true.
  *  Endpoint ini GAK perlu auth — dipanggil dari landing page publik.
+ *  Map snake_case (Supabase) → camelCase (PriceItem interface).
  */
 export async function GET() {
   try {
@@ -23,7 +24,18 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json(data, {
+    // Map snake_case → camelCase to match PriceItem interface
+    const products = (data ?? []).map((p) => ({
+      id: p.id,
+      name: p.name,
+      category: p.category,
+      pricePerDay: p.price_per_day,
+      pricePerWeek: p.price_per_week,
+      specs: p.specs,
+      popular: p.popular,
+    }));
+
+    return NextResponse.json(products, {
       headers: {
         "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
       },
