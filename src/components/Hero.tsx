@@ -15,29 +15,31 @@ export default function Hero() {
       id="home"
       className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background pt-16 scroll-mt-20"
     >
-      {/* Cinematic Background Grid */}
+      {/* Cinematic Background */}
       <div className="pointer-events-none absolute inset-0">
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background" />
-        {/* Subtle grid pattern */}
+        {/* Deep gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
+        {/* Grid pattern */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage:
               "linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)",
             backgroundSize: "64px 64px",
           }}
         />
-        {/* Amber glow - top right */}
-        <div className="absolute -top-32 right-0 h-[500px] w-[500px] rounded-full bg-accent/5 blur-[120px]" />
-        {/* Amber glow - bottom left */}
-        <div className="absolute -bottom-32 left-0 h-[400px] w-[400px] rounded-full bg-accent/5 blur-[100px]" />
+        {/* Primary amber glow — top right */}
+        <div className="absolute -top-40 right-0 h-[600px] w-[600px] rounded-full bg-accent/[0.07] blur-[150px]" />
+        {/* Secondary amber glow — bottom left */}
+        <div className="absolute -bottom-40 left-0 h-[500px] w-[500px] rounded-full bg-accent/[0.05] blur-[130px]" />
+        {/* Subtle white radial — center for depth */}
+        <div className="absolute left-1/2 top-1/3 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-white/[0.015] blur-[100px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
           {/* Badge */}
-          <div className="mb-8 animate-fade-in inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5">
+          <div className="mb-8 animate-fade-in inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/[0.06] px-4 py-1.5 backdrop-blur-sm shadow-[0_0_20px_-4px_rgba(245,158,11,0.15)]">
             <Star className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
             <span className="text-xs font-medium tracking-wide text-accent">
               DIPERCAYA 500+ KLIEN
@@ -116,7 +118,7 @@ export default function Hero() {
               <motion.div
                 key={stat.label}
                 variants={staggerChild}
-                className="flex flex-col items-center rounded-lg border border-border/50 bg-card/50 px-4 py-4 backdrop-blur-sm"
+                className="glass glow-border flex flex-col items-center rounded-xl px-4 py-5"
               >
                 <span className="font-heading text-2xl font-bold text-accent sm:text-3xl">
                   {stat.value}

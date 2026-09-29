@@ -171,7 +171,7 @@ export default function Contact() {
                     <a
                       key={info.label}
                       {...linkProps}
-                      className="flex items-start gap-4 rounded-lg border border-border/50 bg-background p-4 transition-colors hover:border-accent/30"
+                      className="flex items-start gap-4 rounded-lg glass glow-border p-4 transition-all"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
                         <Icon
@@ -194,7 +194,7 @@ export default function Contact() {
                 return (
                   <div
                     key={info.label}
-                    className="flex items-start gap-4 rounded-lg border border-border/50 bg-background p-4 transition-colors hover:border-accent/30"
+                    className="flex items-start gap-4 rounded-lg glass glow-border p-4 transition-all"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
                       <Icon
@@ -240,7 +240,7 @@ export default function Contact() {
 
           {/* Contact Form */}
           <div className="lg:col-span-3">
-            <div className="rounded-xl border border-border/50 bg-background p-6 sm:p-8">
+            <div className="rounded-xl glass p-6 sm:p-8">
               {submitted ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">

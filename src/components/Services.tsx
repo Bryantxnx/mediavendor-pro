@@ -125,7 +125,8 @@ export default function Services() {
                 variants={staggerChild}
                 {...hoverTap}
                 className={cn(
-                  "group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card p-6 transition-colors duration-300 hover:border-accent/30",
+                  "group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition-all duration-300",
+                  "glass glow-border",
                   service.grid,
                   service.hero
                     ? "min-h-[280px] md:min-h-[340px] md:p-8"

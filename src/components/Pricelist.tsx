@@ -137,7 +137,7 @@ export default function Pricelist() {
 
         {/* ── Price Table — Desktop ── */}
         <div className="hidden lg:block">
-          <div className="overflow-hidden rounded-xl border border-border/50">
+          <div className="overflow-hidden rounded-xl glass">
             {/* Table Header */}
             <div className="grid grid-cols-12 gap-4 border-b border-border/50 bg-muted/50 px-6 py-3.5">
               <div className="col-span-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -264,7 +264,7 @@ export default function Pricelist() {
               key={item.name}
               variants={staggerChild}
               className={cn(
-                "relative overflow-hidden rounded-xl border border-border/50 bg-card p-5 transition-colors hover:border-accent/30",
+                "relative overflow-hidden rounded-xl p-5 transition-all glass glow-border",
                 item.popular &&
                   "border-accent/30 shadow-md shadow-accent/5"
               )}
@@ -352,7 +352,7 @@ export default function Pricelist() {
         </motion.div>
 
         {/* Info Note */}
-        <div className="mt-8 flex items-start gap-3 rounded-lg border border-border/50 bg-card p-4">
+        <div className="mt-8 flex items-start gap-3 rounded-lg glass p-4">
           <Info
             className="mt-0.5 h-4 w-4 shrink-0 text-accent"
             aria-hidden="true"

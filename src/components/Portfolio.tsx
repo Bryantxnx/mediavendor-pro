@@ -114,7 +114,7 @@ export default function Portfolio() {
               onClick={() => setModalProject(project)}
               variants={staggerChild}
               {...hoverTap}
-              className="group relative cursor-pointer overflow-hidden rounded-xl border border-border/50 bg-background text-left transition-colors duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="group relative cursor-pointer overflow-hidden rounded-xl text-left transition-all duration-300 glass glow-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <div className="relative w-full aspect-video overflow-hidden rounded-t-xl">
                 <Image
@@ -170,7 +170,7 @@ export default function Portfolio() {
             exit="exit"
           >
             <motion.div
-              className="relative w-full max-w-3xl overflow-hidden rounded-2xl border border-border/50 bg-card shadow-2xl"
+              className="relative w-full max-w-3xl overflow-hidden rounded-2xl glass shadow-2xl shadow-black/50"
               onClick={(e) => e.stopPropagation()}
               variants={scaleFade}
               initial="hidden"

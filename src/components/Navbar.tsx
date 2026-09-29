@@ -22,7 +22,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-background/70 backdrop-blur-2xl">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <a
@@ -76,7 +76,7 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div
         className={cn(
-          "overflow-hidden border-t border-border/50 bg-background/95 backdrop-blur-xl transition-all duration-300 ease-out md:hidden",
+          "overflow-hidden border-t border-white/[0.06] bg-background/90 backdrop-blur-2xl transition-all duration-300 ease-out md:hidden",
           open ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
         )}
       >
