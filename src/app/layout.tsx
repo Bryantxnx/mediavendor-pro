@@ -86,6 +86,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Midtrans Snap.js — payment popup */}
+        <script
+          src={
+            process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true"
+              ? "https://app.midtrans.com/snap/snap.js"
+              : "https://app.sandbox.midtrans.com/snap/snap.js"
+          }
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          async
+        />
       </head>
       <body className="min-h-screen flex flex-col">{children}</body>
     </html>

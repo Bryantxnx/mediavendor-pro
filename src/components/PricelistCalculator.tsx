@@ -22,6 +22,8 @@ import {
   ChevronUp,
   ShoppingCart,
   X,
+  CreditCard,
+  Loader2,
 } from "lucide-react";
 import {
   fadeUp,
@@ -31,12 +33,27 @@ import {
   viewportOnce,
 } from "@/lib/motion";
 import {
-  priceItems,
+  priceItems as fallbackItems,
   rentalCategories,
   type RentalCategory,
+  type PriceItem,
 } from "@/data/pricelist";
 import { generateInvoicePDF } from "@/lib/generate-invoice";
 import { buildWaUrl } from "@/data/site-config";
+
+/* ── Snap.js type declaration ── */
+declare global {
+  interface Window {
+    snap: {
+      pay: (token: string, options: {
+        onSuccess?: (result: unknown) => void;
+        onPending?: (result: unknown) => void;
+        onError?: (result: unknown) => void;
+        onClose?: () => void;
+      }) => void;
+    };
+  }
+}
 
 /* ── Icon map ── */
 const categoryIcons: Record<RentalCategory, React.ElementType> = {
@@ -55,7 +72,7 @@ function formatPrice(price: number): string {
 }
 
 function buildWhatsAppUrl(
-  selectedItems: typeof priceItems,
+  selectedItems: PriceItem[],
   quantities: Map<string, number>,
   days: number,
   totalAfterDiscount: number,
@@ -106,7 +123,7 @@ function getDiscount(days: Duration): { pct: number; label: string } {
  *  Sekarang di luar, terima props, stabil.
  */
 interface SummaryContentProps {
-  selectedItems: typeof priceItems;
+  selectedItems: PriceItem[];
   quantities: Map<string, number>;
   days: Duration;
   discount: { pct: number; label: string };
@@ -114,7 +131,7 @@ interface SummaryContentProps {
   savings: number;
   totalUnitCount: number;
   setDays: (d: Duration) => void;
-  handleInvoiceAndWA: () => void;
+  openCheckout: (mode: "midtrans" | "whatsapp") => void;
   handleInvoiceOnly: () => void;
   clearAll: () => void;
   isMobile?: boolean;
@@ -129,7 +146,7 @@ function SummaryContent({
   savings,
   totalUnitCount,
   setDays,
-  handleInvoiceAndWA,
+  openCheckout,
   handleInvoiceOnly,
   clearAll,
   isMobile = false,
@@ -251,12 +268,22 @@ function SummaryContent({
       <div className="flex flex-col gap-2.5">
         <motion.button
           type="button"
-          onClick={handleInvoiceAndWA}
+          onClick={() => openCheckout("midtrans")}
+          {...buttonPress}
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-amber-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-amber-500 cursor-pointer"
+        >
+          <CreditCard className="h-4 w-4" aria-hidden="true" />
+          Bayar Langsung
+        </motion.button>
+
+        <motion.button
+          type="button"
+          onClick={() => openCheckout("whatsapp")}
           {...buttonPress}
           className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-500 cursor-pointer"
         >
           <MessageCircle className="h-4 w-4" aria-hidden="true" />
-          Kirim WA + Invoice ({totalUnitCount} unit)
+          Pesan via WA ({totalUnitCount} unit)
         </motion.button>
 
         <button
@@ -285,11 +312,34 @@ function SummaryContent({
  *  UNIFIED COMPONENT
  * ══════════════════════════════════════════ */
 export default function PricelistCalculator() {
+  const [products, setProducts] = useState<PriceItem[]>(fallbackItems);
   const [quantities, setQuantities] = useState<Map<string, number>>(new Map());
   const [activeCategory, setActiveCategory] =
     useState<RentalCategory>("Kamera");
   const [days, setDays] = useState<Duration>(1);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [checkoutMode, setCheckoutMode] = useState<"midtrans" | "whatsapp">("whatsapp");
+  const [customerName, setCustomerName] = useState("");
+  const [customerWhatsapp, setCustomerWhatsapp] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
+
+  // Fetch products dari Supabase API, fallback ke file kalau gagal
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => {
+        if (!res.ok) throw new Error("API error");
+        return res.json();
+      })
+      .then((data: PriceItem[]) => {
+        if (data && data.length > 0) setProducts(data);
+      })
+      .catch(() => {
+        // Fallback ke data dari file — landing page tetep jalan
+      });
+  }, []);
 
   // Listen for deep-link from Services component
   useEffect(() => {
@@ -307,7 +357,7 @@ export default function PricelistCalculator() {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
-  const filtered = priceItems.filter((i) => i.category === activeCategory);
+  const filtered = products.filter((i) => i.category === activeCategory);
 
   function toggle(name: string) {
     setQuantities((prev) => {
@@ -334,8 +384,8 @@ export default function PricelistCalculator() {
 
   /* Derived */
   const selectedItems = useMemo(
-    () => priceItems.filter((i) => quantities.has(i.name)),
-    [quantities]
+    () => products.filter((i) => quantities.has(i.name)),
+    [quantities, products]
   );
 
   const totalUnitCount = useMemo(
@@ -383,19 +433,86 @@ export default function PricelistCalculator() {
     [selectedItems, quantities, days, totalAfterDiscount, savings, discount]
   );
 
-  async function handleInvoiceAndWA() {
-    await generateInvoicePDF({
-      items: selectedItems.map((i) => ({
-        item: i,
-        qty: quantities.get(i.name) ?? 1,
-      })),
-      days,
-      totalBeforeDiscount,
-      totalAfterDiscount,
-      discountPct: discount.pct,
-      discountLabel: discount.label,
-    });
-    window.open(waUrl, "_blank", "noopener,noreferrer");
+  // Open checkout modal — user picks payment method
+  function openCheckout(mode: "midtrans" | "whatsapp") {
+    setCheckoutMode(mode);
+    setShowCheckoutModal(true);
+  }
+
+  // Submit order to API
+  async function submitOrder() {
+    if (!customerName.trim() || !customerWhatsapp.trim()) return;
+    setIsSubmitting(true);
+
+    try {
+      const orderItems = selectedItems.map((i) => ({
+        product_name: i.name,
+        quantity: quantities.get(i.name) ?? 1,
+        unit_price: days >= 7 ? i.pricePerWeek : i.pricePerDay,
+        subtotal: (days >= 7 ? i.pricePerWeek : i.pricePerDay) * (quantities.get(i.name) ?? 1),
+      }));
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: {
+            name: customerName,
+            whatsapp: customerWhatsapp,
+            email: customerEmail || undefined,
+          },
+          items: orderItems,
+          rental_days: days,
+          total_amount: totalAfterDiscount,
+          discount_pct: discount.pct,
+          payment_method: checkoutMode,
+        }),
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Gagal membuat pesanan");
+
+      if (checkoutMode === "midtrans" && result.snap_token) {
+        // Generate invoice (belum lunas) and download
+        await generateInvoicePDF({
+          items: selectedItems.map((i) => ({ item: i, qty: quantities.get(i.name) ?? 1 })),
+          days, totalBeforeDiscount, totalAfterDiscount,
+          discountPct: discount.pct, discountLabel: discount.label,
+        });
+        // Open Midtrans Snap popup
+        window.snap.pay(result.snap_token, {
+          onSuccess: () => {
+            setOrderSuccess(result.order_number);
+            setShowCheckoutModal(false);
+            clearAll();
+          },
+          onPending: () => {
+            setOrderSuccess(result.order_number);
+            setShowCheckoutModal(false);
+          },
+          onError: () => {
+            alert("Pembayaran gagal. Silakan coba lagi.");
+          },
+          onClose: () => {
+            // User closed popup without finishing
+          },
+        });
+      } else {
+        // WhatsApp path — download invoice + open WA
+        await generateInvoicePDF({
+          items: selectedItems.map((i) => ({ item: i, qty: quantities.get(i.name) ?? 1 })),
+          days, totalBeforeDiscount, totalAfterDiscount,
+          discountPct: discount.pct, discountLabel: discount.label,
+        });
+        window.open(waUrl, "_blank", "noopener,noreferrer");
+        setOrderSuccess(result.order_number);
+        setShowCheckoutModal(false);
+      }
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Terjadi kesalahan");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   async function handleInvoiceOnly() {
@@ -425,7 +542,7 @@ export default function PricelistCalculator() {
     savings,
     totalUnitCount,
     setDays,
-    handleInvoiceAndWA,
+    openCheckout,
     handleInvoiceOnly,
     clearAll,
   };
@@ -458,7 +575,7 @@ export default function PricelistCalculator() {
           <div className="mb-8 flex flex-wrap justify-center gap-2">
             {rentalCategories.map((cat) => {
               const CatIcon = categoryIcons[cat];
-              const catSelected = priceItems.filter(
+              const catSelected = products.filter(
                 (i) => i.category === cat && quantities.has(i.name)
               ).length;
               return (
@@ -659,7 +776,7 @@ export default function PricelistCalculator() {
                 )}
 
                 <p className="mt-4 text-center text-[10px] text-muted-foreground">
-                  {quantities.size} dari {priceItems.length} peralatan dipilih
+                  {quantities.size} dari {products.length} peralatan dipilih
                 </p>
               </div>
             </div>
@@ -772,20 +889,235 @@ export default function PricelistCalculator() {
                     />
                   </button>
 
-                  {/* WA + Invoice button */}
+                  {/* Payment buttons */}
                   <motion.button
                     type="button"
-                    onClick={handleInvoiceAndWA}
+                    onClick={() => openCheckout("midtrans")}
                     {...buttonPress}
-                    className="shrink-0 inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-500 cursor-pointer"
+                    className="shrink-0 inline-flex items-center gap-1.5 rounded-md bg-amber-600 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-amber-500 cursor-pointer"
+                  >
+                    <CreditCard className="h-3.5 w-3.5" aria-hidden="true" />
+                    Bayar
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    onClick={() => openCheckout("whatsapp")}
+                    {...buttonPress}
+                    className="shrink-0 inline-flex items-center gap-1.5 rounded-md bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-500 cursor-pointer"
                   >
                     <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
-                    Kirim WA
+                    WA
                   </motion.button>
                 </div>
               </div>
             )}
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ══════════════════════════════════════════
+       *  CHECKOUT MODAL
+       * ══════════════════════════════════════════ */}
+      <AnimatePresence>
+        {showCheckoutModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+              onClick={() => !isSubmitting && setShowCheckoutModal(false)}
+            />
+            {/* Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            >
+              <div className="w-full max-w-md rounded-2xl bg-[#172230] border border-border p-6 shadow-2xl">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="font-heading text-lg font-semibold text-foreground">
+                    {checkoutMode === "midtrans"
+                      ? "Checkout \u2014 Bayar Langsung"
+                      : "Checkout \u2014 Pesan via WhatsApp"}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => !isSubmitting && setShowCheckoutModal(false)}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground cursor-pointer"
+                    aria-label="Tutup"
+                    disabled={isSubmitting}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Form */}
+                <div className="space-y-4">
+                  {/* Nama Lengkap */}
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      Nama Lengkap <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="Nama lengkap Anda"
+                      className="w-full rounded-lg border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+
+                  {/* Nomor WhatsApp */}
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                      Nomor WhatsApp <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      value={customerWhatsapp}
+                      onChange={(e) => setCustomerWhatsapp(e.target.value)}
+                      placeholder="6281234567890"
+                      className="w-full rounded-lg border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+
+                  {/* Email — only for midtrans */}
+                  {checkoutMode === "midtrans" && (
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                        Email <span className="text-muted-foreground/50">(opsional)</span>
+                      </label>
+                      <input
+                        type="email"
+                        value={customerEmail}
+                        onChange={(e) => setCustomerEmail(e.target.value)}
+                        placeholder="email@contoh.com"
+                        className="w-full rounded-lg border border-border bg-muted/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Order summary */}
+                <div className="mt-5 rounded-lg bg-muted/30 px-4 py-3">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{totalUnitCount} unit &middot; {days} hari</span>
+                    <span className="font-heading text-base font-bold text-foreground">
+                      Rp {formatPrice(totalAfterDiscount)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="mt-5 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowCheckoutModal(false)}
+                    disabled={isSubmitting}
+                    className="flex-1 rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer disabled:opacity-50"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={submitOrder}
+                    disabled={isSubmitting || !customerName.trim() || !customerWhatsapp.trim()}
+                    className={cn(
+                      "flex-1 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+                      checkoutMode === "midtrans"
+                        ? "bg-amber-600 hover:bg-amber-500"
+                        : "bg-emerald-600 hover:bg-emerald-500"
+                    )}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                        Memproses...
+                      </>
+                    ) : checkoutMode === "midtrans" ? (
+                      <>
+                        <CreditCard className="h-4 w-4" aria-hidden="true" />
+                        Bayar Sekarang
+                      </>
+                    ) : (
+                      <>
+                        <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                        Kirim ke WhatsApp
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ══════════════════════════════════════════
+       *  SUCCESS MODAL
+       * ══════════════════════════════════════════ */}
+      <AnimatePresence>
+        {orderSuccess && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+              onClick={() => setOrderSuccess(null)}
+            />
+            {/* Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            >
+              <div className="w-full max-w-sm rounded-2xl bg-[#172230] border border-border p-6 shadow-2xl text-center">
+                {/* Green checkmark */}
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20">
+                  <Check className="h-8 w-8 text-emerald-400" aria-hidden="true" />
+                </div>
+
+                <h3 className="font-heading text-xl font-bold text-foreground mb-2">
+                  Pesanan Berhasil!
+                </h3>
+
+                <p className="text-sm text-muted-foreground mb-1">
+                  Nomor pesanan Anda:
+                </p>
+                <p className="font-heading text-lg font-bold text-accent mb-4">
+                  {orderSuccess}
+                </p>
+
+                <p className="text-xs leading-relaxed text-muted-foreground mb-6">
+                  {checkoutMode === "midtrans"
+                    ? "Pembayaran berhasil! Invoice akan dikirim via WhatsApp."
+                    : "Pesanan sudah dikirim via WhatsApp. Silakan selesaikan pembayaran sesuai instruksi admin."}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => setOrderSuccess(null)}
+                  className="w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90 cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
