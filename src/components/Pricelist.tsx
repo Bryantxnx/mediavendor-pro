@@ -10,6 +10,7 @@ import {
   Mic,
   Monitor,
   Grip,
+  Users,
   Info,
   MessageCircle,
   FileText,
@@ -35,6 +36,7 @@ const categoryIcons: Record<RentalCategory, React.ElementType> = {
   Lighting: Lightbulb,
   Audio: Mic,
   Support: Grip,
+  Kru: Users,
   Paket: Monitor,
 };
 

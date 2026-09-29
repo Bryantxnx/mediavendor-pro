@@ -75,7 +75,7 @@ const services = [
   {
     icon: Users,
     title: "Sewa Kru",
-    pricelistTab: "Paket",
+    pricelistTab: "Kru",
     description:
       "Kameraman, sutradara, gaffer, sound engineer, dan asisten produksi berpengalaman siap sedia.",
     features: ["Sutradara", "Kameraman", "Gaffer"],
