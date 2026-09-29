@@ -8,9 +8,8 @@ import { siteConfig } from "@/data/site-config";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Sebelum verify domain, pake onboarding@resend.dev
-// Setelah verify domain mediavendorpro.id, ganti ke noreply@mediavendorpro.id
-const FROM_EMAIL = "MediaVendor Pro <onboarding@resend.dev>";
+// Domain mediavendorpro.my.id verified di Resend
+const FROM_EMAIL = "MediaVendor Pro <noreply@mediavendorpro.my.id>";
 
 interface OrderItem {
   product_name: string;
@@ -201,7 +200,7 @@ export async function sendPaymentConfirmationEmail(
             <table width="100%" cellpadding="0" cellspacing="0">
               <tr>
                 <td style="color:#94a3b8;font-size:12px;">${siteConfig.name}</td>
-                <td align="right" style="color:#94a3b8;font-size:12px;">mediavendorpro.id</td>
+                <td align="right" style="color:#94a3b8;font-size:12px;">mediavendorpro.my.id</td>
               </tr>
             </table>
           </td>
