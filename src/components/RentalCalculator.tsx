@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Calculator, MessageCircle, Trash2, Check } from "lucide-react";
+import { Calculator, MessageCircle, Trash2, Check, Tag } from "lucide-react";
 import {
   fadeUp,
   staggerContainer,
@@ -23,10 +23,22 @@ function formatPrice(price: number): string {
   return new Intl.NumberFormat("id-ID").format(price);
 }
 
+/* ── Duration options & discount tiers ── */
+const DURATION_OPTIONS = [1, 2, 3, 5, 7] as const;
+type Duration = (typeof DURATION_OPTIONS)[number];
+
+function getDiscount(days: Duration): { pct: number; label: string } {
+  if (days >= 7) return { pct: 0, label: "Tarif mingguan" };
+  if (days >= 5) return { pct: 10, label: "Diskon 10%" };
+  if (days >= 3) return { pct: 5, label: "Diskon 5%" };
+  return { pct: 0, label: "" };
+}
+
 export default function RentalCalculator() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [activeCategory, setActiveCategory] =
     useState<RentalCategory>("Kamera");
+  const [days, setDays] = useState<Duration>(1);
 
   const filtered = priceItems.filter((i) => i.category === activeCategory);
 
@@ -54,14 +66,31 @@ export default function RentalCalculator() {
     [selectedItems]
   );
 
-  const totalWeekly = useMemo(
-    () => selectedItems.reduce((s, i) => s + i.pricePerWeek, 0),
-    [selectedItems]
-  );
+  /* Duration-aware totals */
+  const discount = getDiscount(days);
+
+  const totalBeforeDiscount = useMemo(() => {
+    if (days >= 7)
+      return selectedItems.reduce((s, i) => s + i.pricePerWeek, 0);
+    return totalDaily * days;
+  }, [selectedItems, totalDaily, days]);
+
+  const totalAfterDiscount = useMemo(() => {
+    if (days >= 7) return totalBeforeDiscount; // weekly rate already discounted
+    return Math.round(totalBeforeDiscount * (1 - discount.pct / 100));
+  }, [totalBeforeDiscount, discount.pct, days]);
+
+  const savings = totalBeforeDiscount - totalAfterDiscount;
 
   /* WhatsApp deep-link */
   const waUrl = useMemo(() => {
     if (selectedItems.length === 0) return "#";
+    const discountLine =
+      discount.pct > 0
+        ? `(${discount.label})`
+        : days >= 7
+          ? "(tarif mingguan)"
+          : "";
     const lines = [
       "Halo MediaVendor Pro, saya ingin sewa peralatan berikut:",
       "",
@@ -70,15 +99,18 @@ export default function RentalCalculator() {
           `${idx + 1}. ${i.name} — Rp ${formatPrice(i.pricePerDay)}/hari`
       ),
       "",
-      `Total estimasi: Rp ${formatPrice(totalDaily)}/hari`,
+      `Durasi sewa: ${days} hari`,
+      `Total estimasi: Rp ${formatPrice(totalAfterDiscount)} ${discountLine}`.trim(),
+      ...(savings > 0
+        ? [`Hemat: Rp ${formatPrice(savings)}`]
+        : []),
       "",
       "Detail kebutuhan:",
       "- Tanggal sewa: ",
-      "- Durasi: ",
       "- Lokasi: ",
     ];
     return `https://wa.me/6285122979535?text=${encodeURIComponent(lines.join("\n"))}`;
-  }, [selectedItems, totalDaily]);
+  }, [selectedItems, totalAfterDiscount, savings, days, discount]);
 
   return (
     <section
@@ -242,23 +274,85 @@ export default function RentalCalculator() {
                   {/* Divider */}
                   <div className="mb-4 h-px bg-border/50" />
 
+                  {/* Duration picker */}
+                  <div className="mb-4">
+                    <p className="mb-2 text-xs font-medium text-muted-foreground">
+                      Durasi Sewa
+                    </p>
+                    <div className="flex gap-1.5">
+                      {DURATION_OPTIONS.map((d) => {
+                        const disc = getDiscount(d);
+                        return (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => setDays(d)}
+                            className={cn(
+                              "relative flex-1 rounded-md py-2 text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                              days === d
+                                ? "bg-accent text-accent-foreground"
+                                : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
+                            )}
+                          >
+                            {d}h
+                            {disc.pct > 0 && (
+                              <span className="absolute -right-0.5 -top-1.5 rounded bg-emerald-500/90 px-1 text-[8px] font-bold text-white">
+                                -{disc.pct}%
+                              </span>
+                            )}
+                            {d >= 7 && (
+                              <span className="absolute -right-0.5 -top-1.5 rounded bg-emerald-500/90 px-1 text-[8px] font-bold text-white">
+                                Best
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   {/* Totals */}
                   <div className="mb-2 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
-                      Total Harian
+                      {days === 1 ? "Per Hari" : `${days} Hari`}
+                      {discount.pct > 0 && (
+                        <span className="ml-1.5 inline-flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-bold text-emerald-400">
+                          <Tag className="h-2.5 w-2.5" aria-hidden="true" />
+                          {discount.label}
+                        </span>
+                      )}
+                      {days >= 7 && discount.pct === 0 && (
+                        <span className="ml-1.5 inline-flex items-center gap-0.5 rounded bg-accent/20 px-1.5 py-0.5 text-[9px] font-bold text-accent">
+                          <Tag className="h-2.5 w-2.5" aria-hidden="true" />
+                          Tarif mingguan
+                        </span>
+                      )}
                     </span>
                     <span className="font-heading text-lg font-bold text-foreground">
-                      Rp {formatPrice(totalDaily)}
+                      Rp {formatPrice(totalAfterDiscount)}
                     </span>
                   </div>
-                  <div className="mb-6 flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      Total Mingguan
-                    </span>
-                    <span className="font-heading text-lg font-bold text-accent">
-                      Rp {formatPrice(totalWeekly)}
-                    </span>
-                  </div>
+                  {savings > 0 && (
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-xs text-emerald-400">
+                        Anda hemat
+                      </span>
+                      <span className="text-xs font-semibold text-emerald-400">
+                        − Rp {formatPrice(savings)}
+                      </span>
+                    </div>
+                  )}
+                  {days > 1 && (
+                    <div className="mb-6 flex items-center justify-between">
+                      <span className="text-[10px] text-muted-foreground/60">
+                        Rata-rata per hari
+                      </span>
+                      <span className="text-[10px] text-muted-foreground/60">
+                        Rp {formatPrice(Math.round(totalAfterDiscount / days))}/hari
+                      </span>
+                    </div>
+                  )}
+                  {days === 1 && <div className="mb-6" />}
 
                   {/* Action buttons */}
                   <div className="flex flex-col gap-3">
