@@ -24,7 +24,7 @@ const services = [
   {
     icon: Camera,
     title: "Sewa Kamera",
-    pricelistTab: "Cameras",
+    pricelistTab: "Kamera",
     description:
       "Kamera profesional DSLR, mirrorless, dan cinema dari brand ternama seperti Sony, Canon, RED, dan Blackmagic.",
     features: ["4K/6K/8K Ready", "Full Frame", "Termasuk Lensa"],
@@ -55,7 +55,7 @@ const services = [
   {
     icon: Video,
     title: "Produksi Video",
-    pricelistTab: "Packages",
+    pricelistTab: "Paket",
     description:
       "Layanan produksi video end-to-end termasuk shooting, editing, color grading, dan delivery.",
     features: ["Multi-Kamera", "Color Grading", "Delivery 4K"],
@@ -65,7 +65,7 @@ const services = [
   {
     icon: Film,
     title: "Pasca Produksi",
-    pricelistTab: "Packages",
+    pricelistTab: "Paket",
     description:
       "Editing profesional, motion graphics, VFX, sound design, dan mastering final untuk semua format.",
     features: ["Motion Graphics", "VFX", "Sound Design"],
@@ -75,7 +75,7 @@ const services = [
   {
     icon: Users,
     title: "Sewa Kru",
-    pricelistTab: "Packages",
+    pricelistTab: "Paket",
     description:
       "Kameraman, sutradara, gaffer, sound engineer, dan asisten produksi berpengalaman siap sedia.",
     features: ["Sutradara", "Kameraman", "Gaffer"],
