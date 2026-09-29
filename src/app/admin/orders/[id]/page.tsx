@@ -43,6 +43,8 @@ interface Order {
   id: string;
   order_number: string;
   customer_id: string;
+  customer_name: string | null;
+  customer_email: string | null;
   status:
     | "pending"
     | "waiting_payment"
