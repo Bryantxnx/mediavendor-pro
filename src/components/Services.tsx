@@ -10,6 +10,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import {
   fadeUp,
   staggerContainer,
@@ -18,6 +19,7 @@ import {
   viewportOnce,
 } from "@/lib/motion";
 
+/* ── Service data — unchanged ── */
 const services = [
   {
     icon: Camera,
@@ -26,6 +28,9 @@ const services = [
     description:
       "Kamera profesional DSLR, mirrorless, dan cinema dari brand ternama seperti Sony, Canon, RED, dan Blackmagic.",
     features: ["4K/6K/8K Ready", "Full Frame", "Termasuk Lensa"],
+    /* Bento layout: hero card */
+    grid: "md:col-span-2 md:row-span-2",
+    hero: true,
   },
   {
     icon: Lightbulb,
@@ -34,6 +39,8 @@ const services = [
     description:
       "Solusi pencahayaan lengkap dari LED panel, softbox, studio strobe, hingga setup HMI outdoor.",
     features: ["LED Panel", "Softbox Kit", "RGB Efek"],
+    grid: "",
+    hero: false,
   },
   {
     icon: Mic,
@@ -42,6 +49,8 @@ const services = [
     description:
       "Sistem mikrofon wireless, boom kit, field recorder, dan peralatan monitoring audio profesional.",
     features: ["Wireless Lav", "Boom Kit", "Field Recorder"],
+    grid: "",
+    hero: false,
   },
   {
     icon: Video,
@@ -50,6 +59,8 @@ const services = [
     description:
       "Layanan produksi video end-to-end termasuk shooting, editing, color grading, dan delivery.",
     features: ["Multi-Kamera", "Color Grading", "Delivery 4K"],
+    grid: "md:col-span-2",
+    hero: false,
   },
   {
     icon: Film,
@@ -58,6 +69,8 @@ const services = [
     description:
       "Editing profesional, motion graphics, VFX, sound design, dan mastering final untuk semua format.",
     features: ["Motion Graphics", "VFX", "Sound Design"],
+    grid: "",
+    hero: false,
   },
   {
     icon: Users,
@@ -66,6 +79,9 @@ const services = [
     description:
       "Kameraman, sutradara, gaffer, sound engineer, dan asisten produksi berpengalaman siap sedia.",
     features: ["Sutradara", "Kameraman", "Gaffer"],
+    /* Bento layout: hero card */
+    grid: "md:col-span-3",
+    hero: true,
   },
 ];
 
@@ -93,9 +109,9 @@ export default function Services() {
           </p>
         </motion.div>
 
-        {/* Service Cards */}
+        {/* ── Bento Grid ── */}
         <motion.div
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid gap-4 sm:grid-cols-2 md:grid-cols-4"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -108,39 +124,81 @@ export default function Services() {
                 key={service.title}
                 variants={staggerChild}
                 {...hoverTap}
-                className="group relative rounded-xl border border-border/50 bg-card p-6 transition-colors duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
+                className={cn(
+                  "group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/50 bg-card p-6 transition-colors duration-300 hover:border-accent/30",
+                  service.grid,
+                  service.hero
+                    ? "min-h-[280px] md:min-h-[340px] md:p-8"
+                    : "min-h-[200px]"
+                )}
               >
-                {/* Icon */}
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors group-hover:bg-accent/20">
-                  <Icon className="h-6 w-6" aria-hidden="true" />
+                {/* Ambient glow — hero cards only */}
+                {service.hero && (
+                  <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-accent/[0.07] blur-3xl" />
+                )}
+
+                {/* Top section */}
+                <div>
+                  {/* Icon */}
+                  <div
+                    className={cn(
+                      "mb-4 flex items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors group-hover:bg-accent/20",
+                      service.hero ? "h-14 w-14" : "h-11 w-11"
+                    )}
+                  >
+                    <Icon
+                      className={cn(
+                        service.hero ? "h-7 w-7" : "h-5 w-5"
+                      )}
+                      aria-hidden="true"
+                    />
+                  </div>
+
+                  {/* Title */}
+                  <h3
+                    className={cn(
+                      "mb-2 font-heading font-semibold text-foreground",
+                      service.hero ? "text-xl md:text-2xl" : "text-base"
+                    )}
+                  >
+                    {service.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p
+                    className={cn(
+                      "leading-relaxed text-muted-foreground",
+                      service.hero ? "mb-5 text-sm md:text-base" : "mb-4 text-xs"
+                    )}
+                  >
+                    {service.description}
+                  </p>
+
+                  {/* Features */}
+                  <ul className="mb-4 flex flex-wrap gap-2">
+                    {service.features.map((feature) => (
+                      <li
+                        key={feature}
+                        className={cn(
+                          "rounded-md bg-muted font-medium text-muted-foreground",
+                          service.hero
+                            ? "px-3 py-1 text-xs"
+                            : "px-2 py-0.5 text-[11px]"
+                        )}
+                      >
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                {/* Title */}
-                <h3 className="mb-2 font-heading text-lg font-semibold text-foreground">
-                  {service.title}
-                </h3>
-
-                {/* Description */}
-                <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                  {service.description}
-                </p>
-
-                {/* Features */}
-                <ul className="mb-4 flex flex-wrap gap-2">
-                  {service.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"
-                    >
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Link — navigates to #pricelist-{tab} which Pricelist listens to */}
+                {/* Bottom — CTA link */}
                 <a
                   href={`#pricelist-${service.pricelistTab}`}
-                  className="inline-flex items-center gap-1 text-sm font-medium text-accent transition-colors hover:text-accent/80"
+                  className={cn(
+                    "inline-flex items-center gap-1 font-medium text-accent transition-colors hover:text-accent/80",
+                    service.hero ? "text-sm" : "text-xs"
+                  )}
                 >
                   Lihat Harga
                   <ArrowRight
@@ -148,6 +206,9 @@ export default function Services() {
                     aria-hidden="true"
                   />
                 </a>
+
+                {/* Subtle bottom border glow on hover */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
               </motion.div>
             );
           })}
