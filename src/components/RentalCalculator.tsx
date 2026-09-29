@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Calculator, MessageCircle, Trash2, Check, Tag } from "lucide-react";
+import { Calculator, MessageCircle, Trash2, Check, Tag, Plus, Minus } from "lucide-react";
 import {
   fadeUp,
   staggerContainer,
@@ -35,7 +35,7 @@ function getDiscount(days: Duration): { pct: number; label: string } {
 }
 
 export default function RentalCalculator() {
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [quantities, setQuantities] = useState<Map<string, number>>(new Map());
   const [activeCategory, setActiveCategory] =
     useState<RentalCategory>("Kamera");
   const [days, setDays] = useState<Duration>(1);
@@ -43,27 +43,36 @@ export default function RentalCalculator() {
   const filtered = priceItems.filter((i) => i.category === activeCategory);
 
   function toggle(name: string) {
-    setSelected((prev) => {
-      const next = new Set(prev);
+    setQuantities((prev) => {
+      const next = new Map(prev);
       if (next.has(name)) next.delete(name);
-      else next.add(name);
+      else next.set(name, 1);
+      return next;
+    });
+  }
+
+  function setQty(name: string, qty: number) {
+    setQuantities((prev) => {
+      const next = new Map(prev);
+      if (qty <= 0) next.delete(name);
+      else next.set(name, qty);
       return next;
     });
   }
 
   function clearAll() {
-    setSelected(new Set());
+    setQuantities(new Map());
   }
 
   /* Derived values */
   const selectedItems = useMemo(
-    () => priceItems.filter((i) => selected.has(i.name)),
-    [selected]
+    () => priceItems.filter((i) => quantities.has(i.name)),
+    [quantities]
   );
 
   const totalDaily = useMemo(
-    () => selectedItems.reduce((s, i) => s + i.pricePerDay, 0),
-    [selectedItems]
+    () => selectedItems.reduce((s, i) => s + i.pricePerDay * (quantities.get(i.name) ?? 1), 0),
+    [selectedItems, quantities]
   );
 
   /* Duration-aware totals */
@@ -71,9 +80,9 @@ export default function RentalCalculator() {
 
   const totalBeforeDiscount = useMemo(() => {
     if (days >= 7)
-      return selectedItems.reduce((s, i) => s + i.pricePerWeek, 0);
+      return selectedItems.reduce((s, i) => s + i.pricePerWeek * (quantities.get(i.name) ?? 1), 0);
     return totalDaily * days;
-  }, [selectedItems, totalDaily, days]);
+  }, [selectedItems, totalDaily, days, quantities]);
 
   const totalAfterDiscount = useMemo(() => {
     if (days >= 7) return totalBeforeDiscount; // weekly rate already discounted
@@ -95,8 +104,11 @@ export default function RentalCalculator() {
       "Halo MediaVendor Pro, saya ingin sewa peralatan berikut:",
       "",
       ...selectedItems.map(
-        (i, idx) =>
-          `${idx + 1}. ${i.name} — Rp ${formatPrice(i.pricePerDay)}/hari`
+        (i, idx) => {
+          const qty = quantities.get(i.name) ?? 1;
+          const qtyLabel = qty > 1 ? ` (×${qty})` : "";
+          return `${idx + 1}. ${i.name}${qtyLabel} — Rp ${formatPrice(i.pricePerDay * qty)}/hari`;
+        }
       ),
       "",
       `Durasi sewa: ${days} hari`,
@@ -158,12 +170,12 @@ export default function RentalCalculator() {
                   {cat}
                   {/* Count badge */}
                   {priceItems.filter(
-                    (i) => i.category === cat && selected.has(i.name)
+                    (i) => i.category === cat && quantities.has(i.name)
                   ).length > 0 && (
                     <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-accent-foreground">
                       {
                         priceItems.filter(
-                          (i) => i.category === cat && selected.has(i.name)
+                          (i) => i.category === cat && quantities.has(i.name)
                         ).length
                       }
                     </span>
@@ -182,37 +194,48 @@ export default function RentalCalculator() {
               key={activeCategory}
             >
               {filtered.map((item) => {
-                const isSelected = selected.has(item.name);
+                const isSelected = quantities.has(item.name);
+                const qty = quantities.get(item.name) ?? 0;
                 return (
-                  <motion.button
+                  <motion.div
                     key={item.name}
-                    type="button"
-                    onClick={() => toggle(item.name)}
                     variants={staggerChild}
-                    whileTap={{ scale: 0.98 }}
                     className={cn(
-                      "group relative flex items-start gap-3 rounded-xl p-4 text-left transition-all cursor-pointer",
+                      "group relative flex items-start gap-3 rounded-xl p-4 text-left transition-all",
                       isSelected
                         ? "glass border border-accent/30 shadow-[0_0_20px_-6px_rgba(245,158,11,0.15)]"
                         : "glass glow-border"
                     )}
                   >
-                    {/* Checkbox */}
-                    <div
-                      className={cn(
-                        "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors",
-                        isSelected
-                          ? "border-accent bg-accent text-accent-foreground"
-                          : "border-border bg-muted"
-                      )}
+                    {/* Checkbox toggle */}
+                    <button
+                      type="button"
+                      onClick={() => toggle(item.name)}
+                      className="mt-0.5 cursor-pointer"
+                      aria-label={isSelected ? `Hapus ${item.name}` : `Tambah ${item.name}`}
                     >
-                      {isSelected && (
-                        <Check className="h-3 w-3" aria-hidden="true" />
-                      )}
-                    </div>
+                      <div
+                        className={cn(
+                          "flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors",
+                          isSelected
+                            ? "border-accent bg-accent text-accent-foreground"
+                            : "border-border bg-muted"
+                        )}
+                      >
+                        {isSelected && (
+                          <Check className="h-3 w-3" aria-hidden="true" />
+                        )}
+                      </div>
+                    </button>
 
                     {/* Info */}
-                    <div className="flex-1 min-w-0">
+                    <div
+                      className="flex-1 min-w-0 cursor-pointer"
+                      onClick={() => { if (!isSelected) toggle(item.name); }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === "Enter" && !isSelected) toggle(item.name); }}
+                    >
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-foreground truncate">
                           {item.name}
@@ -227,7 +250,32 @@ export default function RentalCalculator() {
                         Rp {formatPrice(item.pricePerDay)}/hari
                       </span>
                     </div>
-                  </motion.button>
+
+                    {/* Qty stepper — only when selected */}
+                    {isSelected && (
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setQty(item.name, qty - 1); }}
+                          className="flex h-7 w-7 items-center justify-center rounded-md bg-muted/80 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+                          aria-label="Kurangi"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </button>
+                        <span className="w-6 text-center text-sm font-bold text-foreground">
+                          {qty}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setQty(item.name, qty + 1); }}
+                          className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/20 text-accent transition-colors hover:bg-accent/30 cursor-pointer"
+                          aria-label="Tambah"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+                  </motion.div>
                 );
               })}
             </motion.div>
@@ -256,19 +304,27 @@ export default function RentalCalculator() {
                 <>
                   {/* Selected items list */}
                   <ul className="mb-4 max-h-60 space-y-2 overflow-y-auto">
-                    {selectedItems.map((item) => (
-                      <li
-                        key={item.name}
-                        className="flex items-center justify-between gap-2 rounded-lg bg-muted/50 px-3 py-2 text-xs"
-                      >
-                        <span className="truncate font-medium text-foreground">
-                          {item.name}
-                        </span>
-                        <span className="shrink-0 text-muted-foreground">
-                          Rp {formatPrice(item.pricePerDay)}
-                        </span>
-                      </li>
-                    ))}
+                    {selectedItems.map((item) => {
+                      const qty = quantities.get(item.name) ?? 1;
+                      return (
+                        <li
+                          key={item.name}
+                          className="flex items-center justify-between gap-2 rounded-lg bg-muted/50 px-3 py-2 text-xs"
+                        >
+                          <span className="truncate font-medium text-foreground">
+                            {item.name}
+                            {qty > 1 && (
+                              <span className="ml-1 text-accent font-bold">
+                                ×{qty}
+                              </span>
+                            )}
+                          </span>
+                          <span className="shrink-0 text-muted-foreground">
+                            Rp {formatPrice(item.pricePerDay * qty)}
+                          </span>
+                        </li>
+                      );
+                    })}
                   </ul>
 
                   {/* Divider */}
@@ -367,7 +423,7 @@ export default function RentalCalculator() {
                         className="h-4 w-4"
                         aria-hidden="true"
                       />
-                      Kirim via WhatsApp ({selectedItems.length} item)
+                      Kirim via WhatsApp ({Array.from(quantities.values()).reduce((a, b) => a + b, 0)} unit)
                     </motion.a>
                     <button
                       type="button"
@@ -383,7 +439,7 @@ export default function RentalCalculator() {
 
               {/* Item count */}
               <p className="mt-4 text-center text-[10px] text-muted-foreground">
-                {selected.size} dari {priceItems.length} peralatan dipilih
+                {quantities.size} dari {priceItems.length} peralatan dipilih
               </p>
             </div>
           </div>
