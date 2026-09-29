@@ -100,6 +100,187 @@ function getDiscount(days: Duration): { pct: number; label: string } {
   return { pct: 0, label: "" };
 }
 
+/* ── Extracted Summary Content ──
+ *  Dulunya function component di dalam PricelistCalculator — bikin re-render
+ *  tiap parent update karena React bikin instance baru terus.
+ *  Sekarang di luar, terima props, stabil.
+ */
+interface SummaryContentProps {
+  selectedItems: typeof priceItems;
+  quantities: Map<string, number>;
+  days: Duration;
+  discount: { pct: number; label: string };
+  totalAfterDiscount: number;
+  savings: number;
+  totalUnitCount: number;
+  setDays: (d: Duration) => void;
+  handleInvoiceAndWA: () => void;
+  handleInvoiceOnly: () => void;
+  clearAll: () => void;
+  isMobile?: boolean;
+}
+
+function SummaryContent({
+  selectedItems,
+  quantities,
+  days,
+  discount,
+  totalAfterDiscount,
+  savings,
+  totalUnitCount,
+  setDays,
+  handleInvoiceAndWA,
+  handleInvoiceOnly,
+  clearAll,
+  isMobile = false,
+}: SummaryContentProps) {
+  return (
+    <>
+      {/* Selected items list */}
+      <ul
+        className={cn(
+          "space-y-2 overflow-y-auto",
+          isMobile ? "max-h-40 mb-3" : "max-h-60 mb-4"
+        )}
+      >
+        {selectedItems.map((item) => {
+          const qty = quantities.get(item.name) ?? 1;
+          return (
+            <li
+              key={item.name}
+              className="flex items-center justify-between gap-2 rounded-lg bg-muted/50 px-3 py-2 text-xs"
+            >
+              <span className="truncate font-medium text-foreground">
+                {item.name}
+                {qty > 1 && (
+                  <span className="ml-1 text-accent font-bold">
+                    ×{qty}
+                  </span>
+                )}
+              </span>
+              <span className="shrink-0 text-muted-foreground">
+                Rp {formatPrice(item.pricePerDay * qty)}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Divider */}
+      <div className="mb-3 h-px bg-border/50" />
+
+      {/* Duration picker */}
+      <div className="mb-3">
+        <p className="mb-2 text-xs font-medium text-muted-foreground">
+          Durasi Sewa
+        </p>
+        <div className="flex gap-1.5">
+          {DURATION_OPTIONS.map((d) => {
+            const disc = getDiscount(d);
+            return (
+              <button
+                key={d}
+                type="button"
+                onClick={() => setDays(d)}
+                className={cn(
+                  "relative flex-1 rounded-md py-2 text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                  days === d
+                    ? "bg-accent text-accent-foreground"
+                    : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                {d}h
+                {disc.pct > 0 && (
+                  <span className="absolute -right-0.5 -top-1.5 rounded bg-emerald-500/90 px-1 text-[8px] font-bold text-white">
+                    -{disc.pct}%
+                  </span>
+                )}
+                {d >= 7 && (
+                  <span className="absolute -right-0.5 -top-1.5 rounded bg-emerald-500/90 px-1 text-[8px] font-bold text-white">
+                    Best
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Totals */}
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-sm text-muted-foreground">
+          {days === 1 ? "Per Hari" : `${days} Hari`}
+          {discount.pct > 0 && (
+            <span className="ml-1.5 inline-flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-bold text-emerald-400">
+              <Tag className="h-2.5 w-2.5" aria-hidden="true" />
+              {discount.label}
+            </span>
+          )}
+          {days >= 7 && discount.pct === 0 && (
+            <span className="ml-1.5 inline-flex items-center gap-0.5 rounded bg-accent/20 px-1.5 py-0.5 text-[9px] font-bold text-accent">
+              <Tag className="h-2.5 w-2.5" aria-hidden="true" />
+              Tarif mingguan
+            </span>
+          )}
+        </span>
+        <span className="font-heading text-lg font-bold text-foreground">
+          Rp {formatPrice(totalAfterDiscount)}
+        </span>
+      </div>
+      {savings > 0 && (
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-xs text-emerald-400">Anda hemat</span>
+          <span className="text-xs font-semibold text-emerald-400">
+            − Rp {formatPrice(savings)}
+          </span>
+        </div>
+      )}
+      {days > 1 && (
+        <div className="mb-4 flex items-center justify-between">
+          <span className="text-[10px] text-muted-foreground/60">
+            Rata-rata per hari
+          </span>
+          <span className="text-[10px] text-muted-foreground/60">
+            Rp {formatPrice(Math.round(totalAfterDiscount / days))}/hari
+          </span>
+        </div>
+      )}
+      {days === 1 && <div className="mb-4" />}
+
+      {/* Action buttons */}
+      <div className="flex flex-col gap-2.5">
+        <motion.button
+          type="button"
+          onClick={handleInvoiceAndWA}
+          {...buttonPress}
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-500 cursor-pointer"
+        >
+          <MessageCircle className="h-4 w-4" aria-hidden="true" />
+          Kirim WA + Invoice ({totalUnitCount} unit)
+        </motion.button>
+
+        <button
+          type="button"
+          onClick={handleInvoiceOnly}
+          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-accent/10 px-4 py-2 text-xs font-semibold text-accent transition-colors hover:bg-accent/20 cursor-pointer"
+        >
+          <FileDown className="h-3.5 w-3.5" aria-hidden="true" />
+          Download Invoice PDF
+        </button>
+
+        <button
+          type="button"
+          onClick={clearAll}
+          className="inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-4 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+        >
+          <Trash2 className="h-3 w-3" aria-hidden="true" />
+          Hapus Semua
+        </button>
+      </div>
+    </>
+  );
+}
+
 /* ══════════════════════════════════════════
  *  UNIFIED COMPONENT
  * ══════════════════════════════════════════ */
@@ -234,154 +415,20 @@ export default function PricelistCalculator() {
   const Icon = categoryIcons[activeCategory];
   const hasSelection = selectedItems.length > 0;
 
-  /* ── Shared Summary Content ── */
-  function SummaryContent({ isMobile = false }: { isMobile?: boolean }) {
-    return (
-      <>
-        {/* Selected items list */}
-        <ul
-          className={cn(
-            "space-y-2 overflow-y-auto",
-            isMobile ? "max-h-40 mb-3" : "max-h-60 mb-4"
-          )}
-        >
-          {selectedItems.map((item) => {
-            const qty = quantities.get(item.name) ?? 1;
-            return (
-              <li
-                key={item.name}
-                className="flex items-center justify-between gap-2 rounded-lg bg-muted/50 px-3 py-2 text-xs"
-              >
-                <span className="truncate font-medium text-foreground">
-                  {item.name}
-                  {qty > 1 && (
-                    <span className="ml-1 text-accent font-bold">
-                      ×{qty}
-                    </span>
-                  )}
-                </span>
-                <span className="shrink-0 text-muted-foreground">
-                  Rp {formatPrice(item.pricePerDay * qty)}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* Divider */}
-        <div className="mb-3 h-px bg-border/50" />
-
-        {/* Duration picker */}
-        <div className="mb-3">
-          <p className="mb-2 text-xs font-medium text-muted-foreground">
-            Durasi Sewa
-          </p>
-          <div className="flex gap-1.5">
-            {DURATION_OPTIONS.map((d) => {
-              const disc = getDiscount(d);
-              return (
-                <button
-                  key={d}
-                  type="button"
-                  onClick={() => setDays(d)}
-                  className={cn(
-                    "relative flex-1 rounded-md py-2 text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-                    days === d
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
-                  )}
-                >
-                  {d}h
-                  {disc.pct > 0 && (
-                    <span className="absolute -right-0.5 -top-1.5 rounded bg-emerald-500/90 px-1 text-[8px] font-bold text-white">
-                      -{disc.pct}%
-                    </span>
-                  )}
-                  {d >= 7 && (
-                    <span className="absolute -right-0.5 -top-1.5 rounded bg-emerald-500/90 px-1 text-[8px] font-bold text-white">
-                      Best
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Totals */}
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">
-            {days === 1 ? "Per Hari" : `${days} Hari`}
-            {discount.pct > 0 && (
-              <span className="ml-1.5 inline-flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-bold text-emerald-400">
-                <Tag className="h-2.5 w-2.5" aria-hidden="true" />
-                {discount.label}
-              </span>
-            )}
-            {days >= 7 && discount.pct === 0 && (
-              <span className="ml-1.5 inline-flex items-center gap-0.5 rounded bg-accent/20 px-1.5 py-0.5 text-[9px] font-bold text-accent">
-                <Tag className="h-2.5 w-2.5" aria-hidden="true" />
-                Tarif mingguan
-              </span>
-            )}
-          </span>
-          <span className="font-heading text-lg font-bold text-foreground">
-            Rp {formatPrice(totalAfterDiscount)}
-          </span>
-        </div>
-        {savings > 0 && (
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs text-emerald-400">Anda hemat</span>
-            <span className="text-xs font-semibold text-emerald-400">
-              − Rp {formatPrice(savings)}
-            </span>
-          </div>
-        )}
-        {days > 1 && (
-          <div className="mb-4 flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground/60">
-              Rata-rata per hari
-            </span>
-            <span className="text-[10px] text-muted-foreground/60">
-              Rp {formatPrice(Math.round(totalAfterDiscount / days))}/hari
-            </span>
-          </div>
-        )}
-        {days === 1 && <div className="mb-4" />}
-
-        {/* Action buttons */}
-        <div className="flex flex-col gap-2.5">
-          <motion.button
-            type="button"
-            onClick={handleInvoiceAndWA}
-            {...buttonPress}
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-500 cursor-pointer"
-          >
-            <MessageCircle className="h-4 w-4" aria-hidden="true" />
-            Kirim WA + Invoice ({totalUnitCount} unit)
-          </motion.button>
-
-          <button
-            type="button"
-            onClick={handleInvoiceOnly}
-            className="inline-flex items-center justify-center gap-1.5 rounded-md bg-accent/10 px-4 py-2 text-xs font-semibold text-accent transition-colors hover:bg-accent/20 cursor-pointer"
-          >
-            <FileDown className="h-3.5 w-3.5" aria-hidden="true" />
-            Download Invoice PDF
-          </button>
-
-          <button
-            type="button"
-            onClick={clearAll}
-            className="inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-4 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-          >
-            <Trash2 className="h-3 w-3" aria-hidden="true" />
-            Hapus Semua
-          </button>
-        </div>
-      </>
-    );
-  }
+  /* Props buat SummaryContent (extracted component di luar) */
+  const summaryProps = {
+    selectedItems,
+    quantities,
+    days,
+    discount,
+    totalAfterDiscount,
+    savings,
+    totalUnitCount,
+    setDays,
+    handleInvoiceAndWA,
+    handleInvoiceOnly,
+    clearAll,
+  };
 
   return (
     <>
@@ -608,7 +655,7 @@ export default function PricelistCalculator() {
                     Centang alat di sebelah kiri untuk mulai.
                   </p>
                 ) : (
-                  <SummaryContent />
+                  <SummaryContent {...summaryProps} />
                 )}
 
                 <p className="mt-4 text-center text-[10px] text-muted-foreground">
@@ -686,7 +733,7 @@ export default function PricelistCalculator() {
                         <X className="h-4 w-4" />
                       </button>
                     </div>
-                    <SummaryContent isMobile />
+                    <SummaryContent {...summaryProps} isMobile />
                   </motion.div>
                 </>
               )}
