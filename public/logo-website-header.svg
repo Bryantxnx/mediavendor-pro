@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 220" width="100%" height="100%">
+  <defs>
+    <linearGradient id="webGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3D6" />
+      <stop offset="35%" stop-color="#E8BF65" />
+      <stop offset="70%" stop-color="#B88A2B" />
+      <stop offset="100%" stop-color="#7A540D" />
+    </linearGradient>
+
+    <linearGradient id="webGoldLight" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="30%" stop-color="#F7D885"/>
+      <stop offset="70%" stop-color="#C59632"/>
+      <stop offset="100%" stop-color="#80560F"/>
+    </linearGradient>
+
+    <filter id="webGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#D4AF37" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Compact Emblem on the Left -->
+  <g transform="translate(60, 45) scale(0.68)" filter="url(#webGlow)">
+    <path d="M 15 195 L 50 195 L 95 40 L 60 40 Z" fill="url(#webGold)" />
+    <path d="M 60 40 L 95 40 L 135 155 L 175 40 L 210 40 L 148 195 L 122 195 Z" fill="url(#webGoldLight)" />
+    <path d="M 175 40 L 230 40 C 265 40 280 62 280 95 C 280 128 260 148 225 148 L 178 148 L 192 114 L 222 114 C 238 114 246 106 246 95 C 246 83 238 74 220 74 L 163 74 Z" fill="url(#webGold)" />
+    <polygon points="105,195 125,195 165,85 145,85" fill="transparent" />
+    <polygon points="212,195 242,195 258,145 228,145" fill="url(#webGoldLight)" />
+  </g>
+
+  <!-- Vertical Divider Line -->
+  <line x1="305" y1="55" x2="305" y2="165" stroke="#334155" stroke-width="1.2" opacity="0.6" />
+
+  <!-- Typography Right Lockup -->
+  <!-- "MEDIA VENDOR" -->
+  <text x="345" y="112" 
+        font-family="'Times New Roman', serif" 
+        font-size="46" 
+        font-weight="700" 
+        letter-spacing="8" 
+        fill="#FFFFFF">
+    MEDIA
+  </text>
+  <text x="548" y="112" 
+        font-family="'Times New Roman', serif" 
+        font-size="46" 
+        font-weight="400" 
+        letter-spacing="8" 
+        fill="url(#webGold)">
+    VENDOR
+  </text>
+
+  <!-- "PRO" Badge -->
+  <rect x="795" y="74" width="75" height="42" rx="6" fill="url(#webGold)" />
+  <text x="832" y="102" 
+        text-anchor="middle"
+        font-family="Arial, sans-serif" 
+        font-size="19" 
+        font-weight="900" 
+        letter-spacing="4" 
+        fill="#0A0C10">
+    PRO
+  </text>
+
+  <!-- Subtitle -->
+  <text x="348" y="152" 
+        font-family="Arial, sans-serif" 
+        font-size="13" 
+        font-weight="600" 
+        letter-spacing="9" 
+        fill="#94A3B8">
+    PREMIUM PRODUCTION &amp; BROADCAST SOLUTIONS
+  </text>
+</svg>

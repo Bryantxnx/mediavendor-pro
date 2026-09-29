@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 220" width="100%" height="100%">
+  <defs>
+    <!-- Solid & Printable Rich Antique Gold Gradient -->
+    <linearGradient id="invGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C59632" />
+      <stop offset="50%" stop-color="#9E731E" />
+      <stop offset="100%" stop-color="#735210" />
+    </linearGradient>
+  </defs>
+
+  <!-- Clean Background -->
+  <rect width="850" height="220" rx="12" fill="#FFFFFF" />
+
+  <!-- Crisp Vector Emblem for Print & Invoices -->
+  <g transform="translate(45, 45) scale(0.68)">
+    <path d="M 15 195 L 50 195 L 95 40 L 60 40 Z" fill="#0F172A" />
+    <path d="M 60 40 L 95 40 L 135 155 L 175 40 L 210 40 L 148 195 L 122 195 Z" fill="url(#invGold)" />
+    <path d="M 175 40 L 230 40 C 265 40 280 62 280 95 C 280 128 260 148 225 148 L 178 148 L 192 114 L 222 114 C 238 114 246 106 246 95 C 246 83 238 74 220 74 L 163 74 Z" fill="#0F172A" />
+    <polygon points="105,195 125,195 165,85 145,85" fill="#FFFFFF" />
+    <polygon points="212,195 242,195 258,145 228,145" fill="url(#invGold)" />
+  </g>
+
+  <!-- Elegant Vertical Separator Line -->
+  <line x1="285" y1="52" x2="285" y2="162" stroke="#CBD5E1" stroke-width="1.5" />
+
+  <!-- Invoice Brand Typography -->
+  <text x="325" y="108" 
+        font-family="'Times New Roman', serif" 
+        font-size="44" 
+        font-weight="800" 
+        letter-spacing="6" 
+        fill="#0F172A">
+    MEDIA
+  </text>
+  <text x="520" y="108" 
+        font-family="'Times New Roman', serif" 
+        font-size="44" 
+        font-weight="500" 
+        letter-spacing="6" 
+        fill="url(#invGold)">
+    VENDOR
+  </text>
+
+  <!-- Clean Corporate Subtitle & Vendor Status -->
+  <text x="328" y="142" 
+        font-family="Arial, sans-serif" 
+        font-size="12.5" 
+        font-weight="700" 
+        letter-spacing="8" 
+        fill="#64748B">
+    OFFICIAL MEDIA PARTNER &bull; PRO VENDOR
+  </text>
+
+  <!-- Accent Border Underline -->
+  <line x1="326" y1="158" x2="775" y2="158" stroke="url(#invGold)" stroke-width="1.5" opacity="0.6" />
+</svg>

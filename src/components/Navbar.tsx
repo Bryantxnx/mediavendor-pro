@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import {
   Menu,
   X,
-  Camera,
 } from "lucide-react";
 
 const SITE_URL = "https://mediavendor-pro.vercel.app";
@@ -27,12 +26,14 @@ export default function Navbar() {
         {/* Logo */}
         <a
           href={`${SITE_URL}/#home`}
-          className="flex items-center gap-2 text-foreground transition-colors hover:text-accent"
+          className="flex items-center transition-opacity hover:opacity-80"
         >
-          <Camera className="h-6 w-6 text-accent" aria-hidden="true" />
-          <span className="font-heading text-lg font-bold tracking-tight">
-            MediaVendor<span className="text-accent">Pro</span>
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo-website-header.svg"
+            alt="MediaVendor Pro"
+            className="h-8 w-auto sm:h-9"
+          />
         </a>
 
         {/* Desktop Nav */}
