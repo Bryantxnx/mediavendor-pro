@@ -228,4 +228,66 @@ export const priceItems: PriceItem[] = [
     specs: ["RED/ARRI Camera", "Cinema Lenses", "Full Grip & Electric"],
     popular: true,
   },
+
+  // ── Kru ──
+  {
+    name: "Kameraman",
+    category: "Paket",
+    pricePerDay: 800_000,
+    pricePerWeek: 4_500_000,
+    specs: ["Berpengalaman 5+ Tahun", "Multi-Kamera", "Termasuk Operator"],
+    popular: true,
+  },
+  {
+    name: "Sutradara / Director",
+    category: "Paket",
+    pricePerDay: 1_500_000,
+    pricePerWeek: 8_000_000,
+    specs: ["Konsep Kreatif", "Directing Talent", "Shot List"],
+  },
+  {
+    name: "Gaffer (Lighting Director)",
+    category: "Paket",
+    pricePerDay: 700_000,
+    pricePerWeek: 3_800_000,
+    specs: ["Setup Lighting", "Grip Equipment", "On-Set"],
+  },
+  {
+    name: "Sound Engineer",
+    category: "Paket",
+    pricePerDay: 600_000,
+    pricePerWeek: 3_200_000,
+    specs: ["Boom Operator", "Mixing On-Set", "Audio Monitoring"],
+  },
+
+  // ── Pasca Produksi ──
+  {
+    name: "Editing Video",
+    category: "Paket",
+    pricePerDay: 1_000_000,
+    pricePerWeek: 5_500_000,
+    specs: ["Premiere / DaVinci", "Revisi 2x", "Delivery H.264 + ProRes"],
+    popular: true,
+  },
+  {
+    name: "Color Grading",
+    category: "Paket",
+    pricePerDay: 750_000,
+    pricePerWeek: 4_000_000,
+    specs: ["DaVinci Resolve", "LUT Custom", "Per-Project"],
+  },
+  {
+    name: "Motion Graphics & VFX",
+    category: "Paket",
+    pricePerDay: 1_200_000,
+    pricePerWeek: 6_500_000,
+    specs: ["After Effects", "3D Element", "Green Screen"],
+  },
+  {
+    name: "Sound Design & Mixing",
+    category: "Paket",
+    pricePerDay: 600_000,
+    pricePerWeek: 3_200_000,
+    specs: ["SFX Library", "Music Scoring", "Final Mix"],
+  },
 ];
