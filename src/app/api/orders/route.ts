@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { createSnapTransaction, type MidtransItem } from "@/lib/midtrans";
+import { generateServerInvoicePDF } from "@/lib/generate-invoice-server";
+import { sendOrderReceivedEmail } from "@/lib/resend";
 
 /* ── Helper: generate order number ORD-YYYYMMDD-XXX ── */
 function generateOrderNumber(): string {
@@ -219,7 +221,49 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // ── 5. WhatsApp payment — return order number only ──
+    // ── 5. WhatsApp payment — send email invoice + return order number ──
+    if (customer.email) {
+      try {
+        const pdfBuffer = await generateServerInvoicePDF({
+          items: items.map((item: { product_name: string; quantity: number; unit_price: number; subtotal: number }) => ({
+            product_name: item.product_name,
+            quantity: item.quantity,
+            unit_price: item.unit_price,
+            subtotal: item.subtotal,
+          })),
+          days: rental_days,
+          totalAmount: total_amount,
+          discountPct: discount_pct ?? 0,
+          customerName: customer.name,
+          customerPhone: customer.whatsapp,
+          customerEmail: customer.email,
+          orderNumber,
+          isPaid: false,
+          orderDate: new Date().toISOString(),
+          rentalStartDate: rental_start || null,
+          rentalEndDate: rental_end || null,
+        });
+
+        await sendOrderReceivedEmail({
+          to: customer.email,
+          customerName: customer.name,
+          orderNumber,
+          orderItems: items,
+          totalAmount: total_amount,
+          rentalDays: rental_days,
+          discountPct: discount_pct ?? 0,
+          rentalStartDate: rental_start || null,
+          rentalEndDate: rental_end || null,
+          pdfBuffer,
+        });
+
+        console.log(`Order received email sent to ${customer.email} for order ${orderNumber}`);
+      } catch (emailErr) {
+        // Email failure should NOT block the order — log and continue
+        console.error("Failed to send order received email:", emailErr);
+      }
+    }
+
     return NextResponse.json(
       { order_number: order.order_number },
       { status: 201 },
