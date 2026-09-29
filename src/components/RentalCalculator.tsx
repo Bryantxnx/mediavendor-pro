@@ -3,7 +3,8 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Calculator, MessageCircle, Trash2, Check, Tag, Plus, Minus } from "lucide-react";
+import { Calculator, MessageCircle, Trash2, Check, Tag, Plus, Minus, FileDown } from "lucide-react";
+import { generateInvoicePDF } from "@/lib/generate-invoice";
 import {
   fadeUp,
   staggerContainer,
@@ -412,19 +413,57 @@ export default function RentalCalculator() {
 
                   {/* Action buttons */}
                   <div className="flex flex-col gap-3">
-                    <motion.a
-                      href={waUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    {/* Kirim WA + Auto-download Invoice PDF */}
+                    <motion.button
+                      type="button"
+                      onClick={() => {
+                        // 1. Generate & auto-download invoice PDF
+                        generateInvoicePDF({
+                          items: selectedItems.map((i) => ({
+                            item: i,
+                            qty: quantities.get(i.name) ?? 1,
+                          })),
+                          days,
+                          totalBeforeDiscount,
+                          totalAfterDiscount,
+                          discountPct: discount.pct,
+                          discountLabel: discount.label,
+                        });
+                        // 2. Buka WhatsApp di tab baru
+                        window.open(waUrl, "_blank", "noopener,noreferrer");
+                      }}
                       {...buttonPress}
-                      className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-500"
+                      className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-500 cursor-pointer"
                     >
                       <MessageCircle
                         className="h-4 w-4"
                         aria-hidden="true"
                       />
-                      Kirim via WhatsApp ({Array.from(quantities.values()).reduce((a, b) => a + b, 0)} unit)
-                    </motion.a>
+                      Kirim WA + Download Invoice ({Array.from(quantities.values()).reduce((a, b) => a + b, 0)} unit)
+                    </motion.button>
+
+                    {/* Download Invoice Only (tanpa WA) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        generateInvoicePDF({
+                          items: selectedItems.map((i) => ({
+                            item: i,
+                            qty: quantities.get(i.name) ?? 1,
+                          })),
+                          days,
+                          totalBeforeDiscount,
+                          totalAfterDiscount,
+                          discountPct: discount.pct,
+                          discountLabel: discount.label,
+                        });
+                      }}
+                      className="inline-flex items-center justify-center gap-1.5 rounded-md bg-accent/10 px-4 py-2 text-xs font-semibold text-accent transition-colors hover:bg-accent/20 cursor-pointer"
+                    >
+                      <FileDown className="h-3.5 w-3.5" aria-hidden="true" />
+                      Download Invoice PDF Saja
+                    </button>
+
                     <button
                       type="button"
                       onClick={clearAll}
