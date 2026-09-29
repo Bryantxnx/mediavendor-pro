@@ -478,6 +478,11 @@ export default function PricelistCalculator() {
           items: selectedItems.map((i) => ({ item: i, qty: quantities.get(i.name) ?? 1 })),
           days, totalBeforeDiscount, totalAfterDiscount,
           discountPct: discount.pct, discountLabel: discount.label,
+          customerName: customerName || undefined,
+          customerPhone: customerWhatsapp || undefined,
+          customerEmail: customerEmail || undefined,
+          orderNumber: result.order_number,
+          isPaid: false,
         });
         // Open Midtrans Snap popup
         window.snap.pay(result.snap_token, {
@@ -503,6 +508,11 @@ export default function PricelistCalculator() {
           items: selectedItems.map((i) => ({ item: i, qty: quantities.get(i.name) ?? 1 })),
           days, totalBeforeDiscount, totalAfterDiscount,
           discountPct: discount.pct, discountLabel: discount.label,
+          customerName: customerName || undefined,
+          customerPhone: customerWhatsapp || undefined,
+          customerEmail: customerEmail || undefined,
+          orderNumber: result.order_number,
+          isPaid: false,
         });
         window.open(waUrl, "_blank", "noopener,noreferrer");
         setOrderSuccess(result.order_number);
