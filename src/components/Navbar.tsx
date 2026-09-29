@@ -26,14 +26,23 @@ export default function Navbar() {
         {/* Logo */}
         <a
           href={`${SITE_URL}/#home`}
-          className="flex items-center transition-opacity hover:opacity-80"
+          className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logo-website-header.svg"
-            alt="MediaVendor Pro"
-            className="h-8 w-auto sm:h-9"
+            src="/logo-emblem.svg"
+            alt=""
+            className="h-9 w-9 sm:h-10 sm:w-10"
+            aria-hidden="true"
           />
+          <div className="flex flex-col leading-none">
+            <span className="font-heading text-base font-bold tracking-tight text-foreground sm:text-lg">
+              Media<span className="bg-gradient-to-r from-amber-300 via-amber-500 to-amber-700 bg-clip-text text-transparent">Vendor</span>
+            </span>
+            <span className="text-[9px] font-bold tracking-[0.2em] text-amber-500/80 uppercase sm:text-[10px]">
+              PRO
+            </span>
+          </div>
         </a>
 
         {/* Desktop Nav */}

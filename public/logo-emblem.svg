@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="embGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3D6" />
+      <stop offset="35%" stop-color="#E8BF65" />
+      <stop offset="70%" stop-color="#B88A2B" />
+      <stop offset="100%" stop-color="#7A540D" />
+    </linearGradient>
+    <linearGradient id="embGoldLight" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="30%" stop-color="#F7D885"/>
+      <stop offset="70%" stop-color="#C59632"/>
+      <stop offset="100%" stop-color="#80560F"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(5, 5) scale(0.65)">
+    <path d="M 15 195 L 50 195 L 95 40 L 60 40 Z" fill="url(#embGold)" />
+    <path d="M 60 40 L 95 40 L 135 155 L 175 40 L 210 40 L 148 195 L 122 195 Z" fill="url(#embGoldLight)" />
+    <path d="M 175 40 L 230 40 C 265 40 280 62 280 95 C 280 128 260 148 225 148 L 178 148 L 192 114 L 222 114 C 238 114 246 106 246 95 C 246 83 238 74 220 74 L 163 74 Z" fill="url(#embGold)" />
+    <polygon points="105,195 125,195 165,85 145,85" fill="transparent" />
+    <polygon points="212,195 242,195 258,145 228,145" fill="url(#embGoldLight)" />
+  </g>
+</svg>
