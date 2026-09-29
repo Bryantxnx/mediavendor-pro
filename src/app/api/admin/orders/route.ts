@@ -31,10 +31,23 @@ export async function GET(request: NextRequest) {
     }
 
     // ── Search by order_number or customer name ──
+    // PostgREST doesn't support foreign-table filters inside .or(),
+    // so we search customers separately first.
     if (search) {
-      query = query.or(
-        `order_number.ilike.%${search}%,customers.name.ilike.%${search}%`,
-      );
+      const { data: matchingCustomers } = await supabase
+        .from("customers")
+        .select("id")
+        .ilike("name", `%${search}%`);
+
+      const customerIds = matchingCustomers?.map((c) => c.id) ?? [];
+
+      if (customerIds.length > 0) {
+        query = query.or(
+          `order_number.ilike.%${search}%,customer_id.in.(${customerIds.join(",")})`
+        );
+      } else {
+        query = query.ilike("order_number", `%${search}%`);
+      }
     }
 
     const { data, error } = await query;
