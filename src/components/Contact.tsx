@@ -11,7 +11,7 @@ import {
   CheckCircle,
   MessageCircle,
 } from "lucide-react";
-import { fadeUp, staggerContainer, staggerChild, viewportOnce } from "@/lib/motion";
+import { fadeUp, staggerContainer, staggerChild, cardLift, buttonPress, viewportOnce } from "@/lib/motion";
 
 const GOOGLE_MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Jl.+Oscar+III+Bambu+Apus+Pamulang";
@@ -168,9 +168,10 @@ export default function Contact() {
 
                 if (isLink) {
                   return (
-                    <a
+                    <motion.a
                       key={info.label}
                       {...linkProps}
+                      {...cardLift}
                       className="flex items-start gap-4 rounded-lg glass glow-border p-4 transition-all"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
@@ -187,13 +188,14 @@ export default function Contact() {
                           {info.value}
                         </p>
                       </div>
-                    </a>
+                    </motion.a>
                   );
                 }
 
                 return (
-                  <div
+                  <motion.div
                     key={info.label}
+                    {...cardLift}
                     className="flex items-start gap-4 rounded-lg glass glow-border p-4 transition-all"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
@@ -210,7 +212,7 @@ export default function Contact() {
                         {info.value}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </motion.div>
@@ -383,13 +385,14 @@ export default function Contact() {
                     />
                   </div>
 
-                  <button
+                  <motion.button
                     type="submit"
+                    {...buttonPress}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring cursor-pointer sm:w-auto"
                   >
                     <Send className="h-4 w-4" aria-hidden="true" />
                     Kirim Pesan
-                  </button>
+                  </motion.button>
                 </form>
               )}
             </div>

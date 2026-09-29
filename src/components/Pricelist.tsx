@@ -18,6 +18,7 @@ import {
   fadeUp,
   staggerContainer,
   staggerChild,
+  cardLift,
   viewportOnce,
 } from "@/lib/motion";
 import {
@@ -263,6 +264,7 @@ export default function Pricelist() {
             <motion.div
               key={item.name}
               variants={staggerChild}
+              {...cardLift}
               className={cn(
                 "relative overflow-hidden rounded-xl p-5 transition-all glass glow-border",
                 item.popular &&
