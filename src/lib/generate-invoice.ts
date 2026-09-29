@@ -1,12 +1,11 @@
 /* ── Client-side Invoice PDF Generator ──
- *  Pakai jsPDF + jspdf-autotable.
+ *  Pakai jsPDF + jspdf-autotable (dynamic import — hemat ~300KB dari initial bundle).
  *  Jalan 100% di browser (client-side), zero server, Vercel free tier aman.
  *  Design ngikutin brand MediaVendor Pro: Navy #172230 + Amber #F59E0B.
  */
 
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import type { PriceItem } from "@/data/pricelist";
+import { siteConfig } from "@/data/site-config";
 
 /* ── Types ── */
 export interface InvoiceItem {
@@ -58,7 +57,8 @@ const BORDER: [number, number, number] = [226, 232, 240];
 const SLATE: [number, number, number] = [148, 163, 184];
 
 /* ── Draw Section Badge ── */
-function drawBadge(doc: jsPDF, x: number, y: number, label: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function drawBadge(doc: any, x: number, y: number, label: string) {
   doc.setFillColor(...AMBER);
   doc.rect(x, y, 3, 6.5, "F");
   doc.setFillColor(...NAVY);
@@ -71,8 +71,14 @@ function drawBadge(doc: jsPDF, x: number, y: number, label: string) {
 
 /* ══════════════════════════════════════════════
  *  MAIN: Generate & Auto-Download Invoice PDF
+ *  Dynamic import jsPDF + autotable — hemat ~300KB dari initial bundle.
  * ══════════════════════════════════════════════ */
-export function generateInvoicePDF(data: InvoiceData): void {
+export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import("jspdf"),
+    import("jspdf-autotable"),
+  ]);
+
   const doc = new jsPDF("p", "mm", "a4");
   const pw = 210;
   const mx = 15;
@@ -156,8 +162,8 @@ export function generateInvoicePDF(data: InvoiceData): void {
   doc.setFontSize(8.5);
   doc.setFont("helvetica", "normal");
   doc.text("Broadcast & Cinema Equipment Rental", colR, y + 17);
-  doc.text("Phone: +62 851 2297 9535", colR, y + 21.5);
-  doc.text("Email: halo@mediavendorpro.id", colR, y + 26);
+  doc.text(`Phone: ${siteConfig.phoneFormatted}`, colR, y + 21.5);
+  doc.text(`Email: ${siteConfig.email}`, colR, y + 26);
 
   // ═══════════════════════════════════════
   // 3. SCOPE BAR
@@ -252,9 +258,9 @@ export function generateInvoicePDF(data: InvoiceData): void {
   doc.setFontSize(8.5);
 
   const payRows: [string, string][] = [
-    ["No. Rekening", "8830 9900 1122"],
-    ["Atas Nama", "Media Vendor Pro"],
-    ["Bank", "BCA KCU Jakarta"],
+    ["No. Rekening", siteConfig.bank.accountNumber],
+    ["Atas Nama", siteConfig.bank.accountName],
+    ["Bank", siteConfig.bank.name],
   ];
   payRows.forEach(([lbl, val]) => {
     doc.setTextColor(...GRAY);
@@ -376,7 +382,7 @@ export function generateInvoicePDF(data: InvoiceData): void {
   doc.setTextColor(...WHITE);
   doc.setFontSize(6.5);
   doc.setFont("helvetica", "normal");
-  doc.text("mediavendorpro.vercel.app", pw * 0.77, 294.5, {
+  doc.text("mediavendorpro.id", pw * 0.77, 294.5, {
     align: "center",
   });
 

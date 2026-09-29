@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, Space_Grotesk } from "next/font/google";
+import { siteConfig } from "@/data/site-config";
 import "./globals.css";
-
-const SITE_URL = "https://mediavendor-pro.vercel.app";
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -19,47 +18,61 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "MediaVendor Pro | Sewa Alat Multimedia & Jasa Produksi Profesional",
-  description:
-    "Vendor multimedia profesional untuk sewa kamera, lighting, audio dan jasa produksi video. Dipercaya Pertamina, BNI, Kementerian. Harga kompetitif, peralatan premium.",
-  metadataBase: new URL(SITE_URL),
+  title: `${siteConfig.name} | Sewa Alat Multimedia & Jasa Produksi Profesional`,
+  description: siteConfig.description,
+  metadataBase: new URL(siteConfig.url),
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "MediaVendor Pro | Sewa Alat Multimedia & Jasa Produksi Profesional",
-    description:
-      "Vendor multimedia profesional untuk sewa kamera, lighting, audio dan jasa produksi video. Dipercaya Pertamina, BNI, Kementerian.",
-    url: SITE_URL,
-    siteName: "MediaVendor Pro",
+    title: `${siteConfig.name} | Sewa Alat Multimedia & Jasa Produksi Profesional`,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
     locale: "id_ID",
     type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: `${siteConfig.name} | Sewa Alat Multimedia & Jasa Produksi Profesional`,
+    description: siteConfig.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "MediaVendor Pro",
+  name: siteConfig.name,
   description:
     "Vendor multimedia profesional untuk sewa kamera, lighting, audio dan jasa produksi video di Jakarta.",
-  url: SITE_URL,
-  telephone: "+6285122979535",
-  email: "halo@mediavendorpro.id",
+  url: siteConfig.url,
+  telephone: siteConfig.phone,
+  email: siteConfig.email,
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Jl. Oscar III, Bambu Apus",
-    addressLocality: "Pamulang",
-    addressRegion: "Tangerang Selatan",
-    addressCountry: "ID",
+    streetAddress: siteConfig.address.street,
+    addressLocality: siteConfig.address.locality,
+    addressRegion: siteConfig.address.region,
+    addressCountry: siteConfig.address.country,
   },
-  openingHours: "Mo-Sa 09:00-20:00",
+  openingHours: siteConfig.hoursSchema,
   sameAs: [
-    "https://instagram.com/said88x_",
-    "https://youtube.com/@said88x_",
+    siteConfig.social.instagram,
+    siteConfig.social.youtube,
   ],
   priceRange: "$$",
-  image: `${SITE_URL}/icon.svg`,
+  image: `${siteConfig.url}/icon.svg`,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

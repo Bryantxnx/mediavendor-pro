@@ -5,13 +5,11 @@ import {
   MapPin,
   MessageCircle,
 } from "lucide-react";
+import { siteConfig, buildWaUrl } from "@/data/site-config";
 
-const GOOGLE_MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=Jl.+Oscar+III+Bambu+Apus+Pamulang";
-
-const WA_URL = `https://wa.me/6285122979535?text=${encodeURIComponent(
+const WA_URL = buildWaUrl(
   "Halo MediaVendor Pro, saya ingin konsultasi sewa alat multimedia / jasa produksi"
-)}`;
+);
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -52,25 +50,23 @@ function YoutubeIcon({ className }: { className?: string }) {
   );
 }
 
-const SITE_URL = "https://mediavendor-pro.vercel.app";
-
 const footerLinks = [
   {
     title: "Layanan",
     links: [
-      { label: "Sewa Kamera", href: `${SITE_URL}/#pricelist` },
-      { label: "Peralatan Lighting", href: `${SITE_URL}/#pricelist` },
-      { label: "Peralatan Audio", href: `${SITE_URL}/#pricelist` },
-      { label: "Produksi Video", href: `${SITE_URL}/#pricelist` },
+      { label: "Sewa Kamera", href: "/#pricelist" },
+      { label: "Peralatan Lighting", href: "/#pricelist" },
+      { label: "Peralatan Audio", href: "/#pricelist" },
+      { label: "Produksi Video", href: "/#pricelist" },
     ],
   },
   {
     title: "Perusahaan",
     links: [
-      { label: "Tentang Kami", href: `${SITE_URL}/#services` },
-      { label: "Portofolio", href: `${SITE_URL}/#portfolio` },
-      { label: "Daftar Harga", href: `${SITE_URL}/#pricelist` },
-      { label: "Kontak", href: `${SITE_URL}/#contact` },
+      { label: "Tentang Kami", href: "/#services" },
+      { label: "Portofolio", href: "/#portfolio" },
+      { label: "Daftar Harga", href: "/#pricelist" },
+      { label: "Kontak", href: "/#contact" },
     ],
   },
 ];
@@ -82,7 +78,7 @@ export default function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <a href={`${SITE_URL}/#home`} className="mb-4 flex items-center gap-2">
+            <a href="/#home" className="mb-4 flex items-center gap-2">
               <Camera className="h-6 w-6 text-accent" aria-hidden="true" />
               <span className="font-heading text-lg font-bold tracking-tight text-foreground">
                 MediaVendor<span className="text-accent">Pro</span>
@@ -94,7 +90,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="https://instagram.com/said88x_"
+                href={siteConfig.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Ikuti MediaVendor Pro di Instagram"
@@ -103,7 +99,7 @@ export default function Footer() {
                 <InstagramIcon className="h-4 w-4" />
               </a>
               <a
-                href="https://youtube.com/@said88x_"
+                href={siteConfig.social.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Tonton konten MediaVendor Pro di YouTube"
@@ -121,7 +117,7 @@ export default function Footer() {
                 <MessageCircle className="h-4 w-4" aria-hidden="true" />
               </a>
               <a
-                href="mailto:halo@mediavendorpro.id"
+                href={`mailto:${siteConfig.email}`}
                 aria-label="Kirim email ke MediaVendor Pro"
                 className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground transition-colors hover:border-accent hover:text-accent"
               >
@@ -159,13 +155,13 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
-                  href={GOOGLE_MAPS_URL}
+                  href={siteConfig.maps}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start gap-2.5 text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-                  <span>Jl. Oscar III, Bambu Apus, Pamulang</span>
+                  <span>{siteConfig.address.full}</span>
                 </a>
               </li>
               <li>
@@ -176,16 +172,16 @@ export default function Footer() {
                   className="flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   <Phone className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-                  +62 851-2297-9535
+                  {siteConfig.phoneFormatted}
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:halo@mediavendorpro.id"
+                  href={`mailto:${siteConfig.email}`}
                   className="flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   <Mail className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-                  halo@mediavendorpro.id
+                  {siteConfig.email}
                 </a>
               </li>
             </ul>

@@ -74,22 +74,3 @@ export const cardLift = {
   },
   whileTap: { scale: 0.98 },
 };
-
-/* ── Icon pop on parent hover — use inside motion.div with group ── */
-export const iconPop = {
-  whileHover: {
-    scale: 1.1,
-    rotate: 3,
-    transition: { type: "spring" as const, stiffness: 400, damping: 15 },
-  },
-};
-
-/* ── Fade-in from left (for contact info stagger) ── */
-export const fadeInLeft: Variants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.4, ease: "easeOut" },
-  },
-};

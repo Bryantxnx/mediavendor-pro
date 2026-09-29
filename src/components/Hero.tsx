@@ -8,6 +8,7 @@ import {
   buttonPress,
   viewportOnce,
 } from "@/lib/motion";
+import { buildWaUrl } from "@/data/site-config";
 
 export default function Hero() {
   return (
@@ -82,7 +83,7 @@ export default function Hero() {
               Lihat Daftar Harga
             </motion.a>
             <motion.a
-              href="https://wa.me/6285122979535?text=Halo%20MediaVendor%20Pro%2C%20saya%20ingin%20konsultasi%20tentang%20sewa%20alat%20%2F%20jasa%20produksi."
+              href={buildWaUrl("Halo MediaVendor Pro, saya ingin konsultasi tentang sewa alat / jasa produksi.")}
               target="_blank"
               rel="noopener noreferrer"
               {...buttonPress}

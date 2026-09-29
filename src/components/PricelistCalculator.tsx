@@ -36,6 +36,7 @@ import {
   type RentalCategory,
 } from "@/data/pricelist";
 import { generateInvoicePDF } from "@/lib/generate-invoice";
+import { buildWaUrl } from "@/data/site-config";
 
 /* ── Icon map ── */
 const categoryIcons: Record<RentalCategory, React.ElementType> = {
@@ -85,7 +86,7 @@ function buildWhatsAppUrl(
     "- Tanggal sewa: ",
     "- Lokasi: ",
   ];
-  return `https://wa.me/6285122979535?text=${encodeURIComponent(lines.join("\n"))}`;
+  return buildWaUrl(lines.join("\n"));
 }
 
 /* ── Duration options & discount tiers ── */
@@ -201,8 +202,8 @@ export default function PricelistCalculator() {
     [selectedItems, quantities, days, totalAfterDiscount, savings, discount]
   );
 
-  function handleInvoiceAndWA() {
-    generateInvoicePDF({
+  async function handleInvoiceAndWA() {
+    await generateInvoicePDF({
       items: selectedItems.map((i) => ({
         item: i,
         qty: quantities.get(i.name) ?? 1,
@@ -216,8 +217,8 @@ export default function PricelistCalculator() {
     window.open(waUrl, "_blank", "noopener,noreferrer");
   }
 
-  function handleInvoiceOnly() {
-    generateInvoicePDF({
+  async function handleInvoiceOnly() {
+    await generateInvoicePDF({
       items: selectedItems.map((i) => ({
         item: i,
         qty: quantities.get(i.name) ?? 1,

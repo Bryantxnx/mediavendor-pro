@@ -12,36 +12,34 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { fadeUp, staggerContainer, staggerChild, cardLift, buttonPress, viewportOnce } from "@/lib/motion";
-
-const GOOGLE_MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=Jl.+Oscar+III+Bambu+Apus+Pamulang";
+import { siteConfig, buildWaUrl } from "@/data/site-config";
 
 const contactInfo = [
   {
     icon: Phone,
     label: "Telepon / WhatsApp",
-    value: "+62 851-2297-9535",
-    href: "tel:+6285122979535",
+    value: siteConfig.phoneFormatted,
+    href: `tel:${siteConfig.phone}`,
     external: false,
   },
   {
     icon: Mail,
     label: "Email",
-    value: "halo@mediavendorpro.id",
-    href: "mailto:halo@mediavendorpro.id",
+    value: siteConfig.email,
+    href: `mailto:${siteConfig.email}`,
     external: false,
   },
   {
     icon: MapPin,
     label: "Studio",
-    value: "Jl. Oscar III, Bambu Apus, Pamulang",
-    href: GOOGLE_MAPS_URL,
+    value: siteConfig.address.full,
+    href: siteConfig.maps,
     external: true,
   },
   {
     icon: Clock,
     label: "Jam Operasional",
-    value: "Senin – Sabtu: 09.00 – 20.00",
+    value: siteConfig.hours,
     href: "",
     external: false,
   },
@@ -109,8 +107,8 @@ export default function Contact() {
       `- Detail Kebutuhan: ${message}`,
     ].join("\n");
 
-    const waUrl = `https://wa.me/6285122979535?text=${encodeURIComponent(text)}`;
-    window.open(waUrl, "_blank");
+    const waUrl = buildWaUrl(text);
+    window.open(waUrl, "_blank", "noopener,noreferrer");
     setSubmitted(true);
   }
 
@@ -228,7 +226,7 @@ export default function Contact() {
                 mendadak Anda.
               </p>
               <a
-                href={`https://wa.me/6285122979535?text=${encodeURIComponent("Halo MediaVendor Pro, saya ingin cek ketersediaan alat untuk hari ini.")}`}
+                href={buildWaUrl("Halo MediaVendor Pro, saya ingin cek ketersediaan alat untuk hari ini.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Hubungi MediaVendor Pro via WhatsApp untuk cek ketersediaan"

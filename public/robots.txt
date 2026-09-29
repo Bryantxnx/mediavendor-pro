@@ -1,0 +1,5 @@
+# MediaVendor Pro — robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://mediavendor-pro.vercel.app/sitemap.xml

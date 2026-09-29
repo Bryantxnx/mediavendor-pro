@@ -2,12 +2,11 @@
 
 import { MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { buildWaUrl } from "@/data/site-config";
 
-const WA_NUMBER = "6285122979535";
-const WA_TEXT = encodeURIComponent(
+const WA_URL = buildWaUrl(
   "Halo MediaVendor Pro, saya ingin konsultasi sewa alat multimedia / jasa produksi"
 );
-const WA_URL = `https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`;
 
 export default function FloatingWhatsApp() {
   return (

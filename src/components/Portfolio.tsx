@@ -20,6 +20,7 @@ import {
   type PortfolioProject,
   type PortfolioCategory,
 } from "@/data/portfolio";
+import { buildWaUrl } from "@/data/site-config";
 
 export default function Portfolio() {
   const [activeCategory, setActiveCategory] =
@@ -236,7 +237,7 @@ export default function Portfolio() {
 
                 <div className="flex flex-wrap gap-3">
                   <a
-                    href={`https://wa.me/6285122979535?text=${encodeURIComponent(`Halo MediaVendor Pro, saya tertarik dengan proyek seperti \"${modalProject.title}\". Bisa konsultasi lebih lanjut?`)}`}
+                    href={buildWaUrl(`Halo MediaVendor Pro, saya tertarik dengan proyek seperti \"${modalProject.title}\". Bisa konsultasi lebih lanjut?`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-xs font-semibold text-accent-foreground transition-all hover:brightness-110"
