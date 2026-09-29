@@ -122,15 +122,16 @@ export async function PUT(
           .eq("id", id)
           .single();
 
-        const customerEmail = fullOrder?.customers?.email;
+        const customerEmail = fullOrder?.customer_email ?? fullOrder?.customers?.email;
         if (customerEmail && fullOrder) {
+          const customerName = fullOrder.customer_name ?? fullOrder.customers?.name ?? "Customer";
           // Generate PDF attachment
           const pdfBuffer = await generateServerInvoicePDF({
             items: fullOrder.order_items,
             days: fullOrder.rental_days,
             totalAmount: fullOrder.total_amount,
             discountPct: fullOrder.discount_pct ?? 0,
-            customerName: fullOrder.customers?.name,
+            customerName: customerName,
             customerPhone: fullOrder.customers?.whatsapp,
             customerEmail: customerEmail,
             orderNumber: fullOrder.order_number,
@@ -143,7 +144,7 @@ export async function PUT(
           // Send email
           await sendPaymentConfirmationEmail({
             to: customerEmail,
-            customerName: fullOrder.customers?.name ?? "Customer",
+            customerName: customerName,
             orderNumber: fullOrder.order_number,
             orderItems: fullOrder.order_items,
             totalAmount: fullOrder.total_amount,
