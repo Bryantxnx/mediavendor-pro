@@ -19,6 +19,7 @@ interface Order {
   status: string;
   total_amount: number;
   created_at: string;
+  customer_name?: string | null;
   customers: { id: string; name: string } | null;
 }
 
@@ -86,43 +87,17 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     async function fetchAll() {
       try {
-        const [productsRes, ordersRes, customersRes] = await Promise.all([
-          fetch("/api/admin/products"),
-          fetch("/api/admin/orders"),
-          fetch("/api/admin/customers"),
-        ]);
-
-        const products: Product[] = productsRes.ok
-          ? await productsRes.json()
-          : [];
-        const orders: Order[] = ordersRes.ok ? await ordersRes.json() : [];
-        const customers: unknown[] = customersRes.ok
-          ? await customersRes.json()
-          : [];
-
-        const activeProducts = products.filter((p) => p.is_active);
-
-        const totalRevenue = orders.reduce(
-          (sum, o) =>
-            o.status !== "cancelled"
-              ? sum + (Number(o.total_amount) || 0)
-              : sum,
-          0,
-        );
-
-        const recentOrders = orders.slice(0, 5);
-
-        const lowStockProducts = products
-          .filter((p) => p.is_active && p.stock <= 2)
-          .sort((a, b) => a.stock - b.stock);
+        const res = await fetch("/api/admin/dashboard");
+        if (!res.ok) throw new Error("Failed to fetch dashboard");
+        const d = await res.json();
 
         setData({
-          totalProducts: activeProducts.length,
-          totalOrders: orders.length,
-          totalCustomers: customers.length,
-          totalRevenue,
-          recentOrders,
-          lowStockProducts,
+          totalProducts: d.totalProducts ?? 0,
+          totalOrders: d.totalOrders ?? 0,
+          totalCustomers: d.totalCustomers ?? 0,
+          totalRevenue: d.totalRevenue ?? 0,
+          recentOrders: d.recentOrders ?? [],
+          lowStockProducts: d.lowStockProducts ?? [],
           loading: false,
         });
       } catch (err) {
@@ -252,7 +227,7 @@ export default function AdminDashboardPage() {
                       </span>
                     </div>
                     <p className="mt-0.5 truncate text-xs text-gray-500">
-                      {o.customers?.name ?? "—"} &middot;{" "}
+                      {o.customer_name ?? o.customers?.name ?? "—"} &middot;{" "}
                       {formatDate(o.created_at)}
                     </p>
                   </div>
