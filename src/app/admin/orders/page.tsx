@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -134,12 +134,20 @@ export default function OrdersPage() {
   const [activeStatus, setActiveStatus] = useState<StatusFilter>("all");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   /* ── Debounce search ─────────────────────────────────────── */
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(timer);
   }, [search]);
+
+  /* ── Reset page when filters change ─────────────────────── */
+  useEffect(() => {
+    setPage(1);
+  }, [activeStatus, debouncedSearch]);
 
   /* ── Fetch orders ────────────────────────────────────────── */
   const fetchOrders = useCallback(async () => {
@@ -148,28 +156,25 @@ export default function OrdersPage() {
       const params = new URLSearchParams();
       if (activeStatus !== "all") params.set("status", activeStatus);
       if (debouncedSearch.trim()) params.set("search", debouncedSearch.trim());
+      params.set("page", String(page));
 
       const qs = params.toString();
       const res = await fetch(`/api/admin/orders${qs ? `?${qs}` : ""}`);
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       setOrders(Array.isArray(data) ? data : data.orders ?? []);
+      setTotalPages(data.totalPages ?? 1);
+      setTotalCount(data.total ?? 0);
     } catch {
       setOrders([]);
     } finally {
       setLoading(false);
     }
-  }, [activeStatus, debouncedSearch]);
+  }, [activeStatus, debouncedSearch, page]);
 
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
-
-  /* ── Filtered list (client-side fallback for search) ────── */
-  const filtered = useMemo(() => {
-    // Server already filters, but keep a local guard for safety
-    return orders;
-  }, [orders]);
 
   /* ── UI ──────────────────────────────────────────────────── */
   return (
@@ -183,7 +188,7 @@ export default function OrdersPage() {
           <p className="mt-1 text-sm text-gray-500">
             {loading
               ? "Memuat pesanan..."
-              : `${filtered.length} pesanan ditemukan`}
+              : `${totalCount} pesanan ditemukan`}
           </p>
         </div>
       </div>
@@ -225,7 +230,7 @@ export default function OrdersPage() {
         <div className="flex items-center justify-center py-32">
           <Loader2 size={32} className="animate-spin text-[#F59E0B]" />
         </div>
-      ) : filtered.length === 0 ? (
+      ) : orders.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/[0.08] bg-[#172230]/50 py-20">
           <Package size={48} className="text-gray-600" />
           <p className="mt-4 text-sm text-gray-500">
@@ -268,7 +273,7 @@ export default function OrdersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.04]">
-                {filtered.map((order) => {
+                {orders.map((order) => {
                   const status = STATUS_BADGE[order.status];
                   const payStatus = PAYMENT_STATUS_BADGE[order.payment_status];
                   return (
@@ -359,7 +364,7 @@ export default function OrdersPage() {
 
           {/* ── Mobile Cards ───────────────────────────────── */}
           <div className="flex flex-col gap-3 lg:hidden">
-            {filtered.map((order) => {
+            {orders.map((order) => {
               const status = STATUS_BADGE[order.status];
               const payStatus = PAYMENT_STATUS_BADGE[order.payment_status];
               return (
@@ -433,10 +438,35 @@ export default function OrdersPage() {
         </>
       )}
 
-      {/* Result count */}
-      {!loading && filtered.length > 0 && (
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-xs text-gray-500">
+            Halaman {page} dari {totalPages} ({totalCount} pesanan)
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Sebelumnya
+            </button>
+            <button
+              type="button"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Berikutnya
+            </button>
+          </div>
+        </div>
+      )}
+      {!loading && totalPages <= 1 && orders.length > 0 && (
         <p className="mt-3 text-xs text-gray-500">
-          Menampilkan {filtered.length} pesanan
+          Menampilkan {orders.length} pesanan
         </p>
       )}
     </>

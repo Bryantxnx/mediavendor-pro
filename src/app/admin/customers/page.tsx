@@ -45,6 +45,9 @@ export default function CustomersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   /* ── Debounce search input ── */
   useEffect(() => {
@@ -52,23 +55,37 @@ export default function CustomersPage() {
     return () => clearTimeout(t);
   }, [search]);
 
+  /* ── Reset page when search changes ── */
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
+
   /* ── Fetch customers ── */
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (debouncedSearch) params.set("search", debouncedSearch);
+      params.set("page", String(page));
       const res = await fetch(`/api/admin/customers?${params}`);
       if (res.ok) {
         const data = await res.json();
-        setCustomers(data);
+        if (Array.isArray(data)) {
+          setCustomers(data);
+          setTotalPages(1);
+          setTotalCount(data.length);
+        } else {
+          setCustomers(data.customers ?? []);
+          setTotalPages(data.totalPages ?? 1);
+          setTotalCount(data.total ?? 0);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch customers:", err);
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch]);
+  }, [debouncedSearch, page]);
 
   useEffect(() => {
     fetchCustomers();
@@ -83,7 +100,7 @@ export default function CustomersPage() {
             Pelanggan
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            {loading ? "Memuat…" : `${customers.length} pelanggan terdaftar`}
+            {loading ? "Memuat…" : `${totalCount} pelanggan terdaftar`}
           </p>
         </div>
       </div>
@@ -230,6 +247,38 @@ export default function CustomersPage() {
             </Link>
           ))}
         </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-xs text-gray-500">
+            Halaman {page} dari {totalPages} ({totalCount} pelanggan)
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Sebelumnya
+            </button>
+            <button
+              type="button"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Berikutnya
+            </button>
+          </div>
+        </div>
+      )}
+      {!loading && totalPages <= 1 && customers.length > 0 && (
+        <p className="mt-3 text-xs text-gray-500">
+          Menampilkan {customers.length} pelanggan
+        </p>
       )}
     </>
   );

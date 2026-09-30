@@ -1,18 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 
+const PAGE_SIZE = 20;
+
 /* ── GET /api/admin/customers ── */
 export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient();
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search");
+    const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
 
     /* ── Fetch customers ── */
     let customerQuery = supabase
       .from("customers")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, to);
 
     if (search) {
       customerQuery = customerQuery.or(
@@ -20,7 +26,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { data: customers, error: custErr } = await customerQuery;
+    const { data: customers, error: custErr, count } = await customerQuery;
 
     if (custErr) {
       console.error("GET /api/admin/customers error:", custErr);
@@ -28,7 +34,13 @@ export async function GET(request: NextRequest) {
     }
 
     if (!customers || customers.length === 0) {
-      return NextResponse.json([]);
+      return NextResponse.json({
+        customers: [],
+        total: count ?? 0,
+        page,
+        pageSize: PAGE_SIZE,
+        totalPages: Math.ceil((count ?? 0) / PAGE_SIZE),
+      });
     }
 
     /* ── Fetch order aggregates per customer ── */
@@ -42,13 +54,17 @@ export async function GET(request: NextRequest) {
     if (aggErr) {
       console.error("GET /api/admin/customers agg error:", aggErr);
       // Return customers without aggregates rather than failing
-      return NextResponse.json(
-        customers.map((c) => ({
+      return NextResponse.json({
+        customers: customers.map((c) => ({
           ...c,
           order_count: 0,
           total_spending: 0,
         })),
-      );
+        total: count ?? 0,
+        page,
+        pageSize: PAGE_SIZE,
+        totalPages: Math.ceil((count ?? 0) / PAGE_SIZE),
+      });
     }
 
     /* ── Aggregate in JS ── */
@@ -68,7 +84,13 @@ export async function GET(request: NextRequest) {
       total_spending: aggMap[c.id]?.total_spending ?? 0,
     }));
 
-    return NextResponse.json(result);
+    return NextResponse.json({
+      customers: result,
+      total: count ?? 0,
+      page,
+      pageSize: PAGE_SIZE,
+      totalPages: Math.ceil((count ?? 0) / PAGE_SIZE),
+    });
   } catch (err) {
     console.error("GET /api/admin/customers error:", err);
     return NextResponse.json(
