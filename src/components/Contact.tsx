@@ -250,11 +250,11 @@ export default function Contact() {
                     />
                   </div>
                   <h3 className="mb-2 font-heading text-xl font-semibold text-foreground">
-                    Pesan Terkirim!
+                    WhatsApp Terbuka!
                   </h3>
                   <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-                    Terima kasih telah menghubungi kami. Tim kami akan meninjau
-                    permintaan Anda dan menghubungi Anda dalam 24 jam.
+                    Pesan Anda sudah disiapkan di WhatsApp. Silakan kirim langsung
+                    dari aplikasi WhatsApp dan tim kami akan merespons dalam 24 jam.
                   </p>
                   <button
                     type="button"

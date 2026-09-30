@@ -75,7 +75,7 @@ export default function RentalGuide() {
         {/* Section Header */}
         <div className="mb-16 text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
-            How It Works
+            Cara Kerja
           </p>
           <h2 className="mb-4 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Alur Sewa Equipment

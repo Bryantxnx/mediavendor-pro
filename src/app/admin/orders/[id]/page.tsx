@@ -18,6 +18,7 @@ import {
   Download,
 } from "lucide-react";
 import { generateInvoicePDF } from "@/lib/generate-invoice";
+import { priceItems } from "@/data/pricelist";
 
 /* ── Types ────────────────────────────────────────────────── */
 
@@ -240,7 +241,7 @@ export default function OrderDetailPage() {
         items: items.map((it) => ({
           item: {
             name: it.product_name,
-            category: "Kamera",
+            category: priceItems.find((p) => p.name === it.product_name)?.category ?? "Kamera",
             pricePerDay: it.unit_price,
             pricePerWeek: it.unit_price,
             specs: [],
