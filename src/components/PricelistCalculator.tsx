@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useSpring, useTransform, useMotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   Camera,
@@ -121,6 +121,27 @@ function getDiscount(days: Duration): { pct: number; label: string } {
   if (days >= 5) return { pct: 10, label: "Diskon 10%" };
   if (days >= 3) return { pct: 5, label: "Diskon 5%" };
   return { pct: 0, label: "" };
+}
+
+/* ── Animated Price Counter ── */
+function AnimatedPrice({ value, className }: { value: number; className?: string }) {
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, { stiffness: 120, damping: 20, mass: 0.5 });
+  const display = useTransform(springValue, (v) => `Rp ${formatPrice(Math.round(v))}`);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    motionValue.set(value);
+  }, [value, motionValue]);
+
+  useEffect(() => {
+    const unsubscribe = display.on("change", (v) => {
+      if (ref.current) ref.current.textContent = v;
+    });
+    return unsubscribe;
+  }, [display]);
+
+  return <span ref={ref} className={className}>Rp {formatPrice(value)}</span>;
 }
 
 /* ── Extracted Summary Content ──
@@ -246,9 +267,7 @@ function SummaryContent({
             </span>
           )}
         </span>
-        <span className="font-heading text-lg font-bold text-foreground">
-          Rp {formatPrice(totalAfterDiscount)}
-        </span>
+        <AnimatedPrice value={totalAfterDiscount} className="font-heading text-lg font-bold text-foreground" />
       </div>
       {savings > 0 && (
         <div className="mb-2 flex items-center justify-between">
@@ -272,16 +291,6 @@ function SummaryContent({
 
       {/* Action buttons */}
       <div className="flex flex-col gap-2.5">
-        <motion.button
-          type="button"
-          onClick={() => openCheckout("midtrans")}
-          {...buttonPress}
-          className="inline-flex items-center justify-center gap-2 rounded-md bg-amber-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-amber-500 cursor-pointer"
-        >
-          <CreditCard className="h-4 w-4" aria-hidden="true" />
-          Bayar Langsung
-        </motion.button>
-
         <motion.button
           type="button"
           onClick={() => openCheckout("whatsapp")}
@@ -612,22 +621,32 @@ export default function PricelistCalculator() {
               const catSelected = products.filter(
                 (i) => i.category === cat && quantities.has(i.name)
               ).length;
+              const isActive = activeCategory === cat;
               return (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setActiveCategory(cat)}
                   className={cn(
-                    "relative inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-                    activeCategory === cat
-                      ? "bg-accent text-accent-foreground shadow-md shadow-accent/20"
+                    "relative inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                    isActive
+                      ? "text-accent-foreground"
                       : "border border-border bg-card text-muted-foreground hover:border-accent/30 hover:text-foreground"
                   )}
                 >
-                  <CatIcon className="h-4 w-4" aria-hidden="true" />
-                  {cat}
+                  {isActive && (
+                    <motion.span
+                      layoutId="pricelist-tab-pill"
+                      className="absolute inset-0 rounded-md bg-accent shadow-md shadow-accent/20"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10 flex items-center gap-2">
+                    <CatIcon className="h-4 w-4" aria-hidden="true" />
+                    {cat}
+                  </span>
                   {catSelected > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-white">
+                    <span className="relative z-10 -mr-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-white">
                       {catSelected}
                     </span>
                   )}
@@ -655,11 +674,13 @@ export default function PricelistCalculator() {
                     <motion.div
                       key={item.name}
                       variants={staggerChild}
+                      whileHover={{ y: -2 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
                       className={cn(
-                        "group relative flex flex-col rounded-xl p-4 transition-all",
+                        "group relative flex flex-col rounded-xl p-4 transition-all duration-300",
                         isSelected
-                          ? "glass border border-accent/30 shadow-[0_0_20px_-6px_rgba(245,158,11,0.15)]"
-                          : "glass glow-border"
+                          ? "bg-accent/[0.06] border-2 border-accent/50 shadow-[0_0_24px_-4px_rgba(245,158,11,0.25)] ring-1 ring-accent/20"
+                          : "glass border border-transparent hover:border-accent/15 hover:shadow-[0_0_16px_-6px_rgba(245,158,11,0.1)]"
                       )}
                     >
                       {/* Top: checkbox + name + popular */}
@@ -923,24 +944,15 @@ export default function PricelistCalculator() {
                     />
                   </button>
 
-                  {/* Payment buttons */}
-                  <motion.button
-                    type="button"
-                    onClick={() => openCheckout("midtrans")}
-                    {...buttonPress}
-                    className="shrink-0 inline-flex items-center gap-1.5 rounded-md bg-amber-600 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-amber-500 cursor-pointer"
-                  >
-                    <CreditCard className="h-3.5 w-3.5" aria-hidden="true" />
-                    Bayar
-                  </motion.button>
+                  {/* Payment button */}
                   <motion.button
                     type="button"
                     onClick={() => openCheckout("whatsapp")}
                     {...buttonPress}
-                    className="shrink-0 inline-flex items-center gap-1.5 rounded-md bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-500 cursor-pointer"
+                    className="shrink-0 inline-flex items-center gap-1.5 rounded-md bg-emerald-600 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-500 cursor-pointer"
                   >
                     <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
-                    WA
+                    Pesan via WA
                   </motion.button>
                 </div>
               </div>
