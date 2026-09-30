@@ -36,6 +36,7 @@ interface DashboardData {
   totalOrders: number;
   totalCustomers: number;
   totalRevenue: number;
+  pipelineRevenue: number;
   recentOrders: Order[];
   lowStockProducts: Product[];
   loading: boolean;
@@ -79,6 +80,7 @@ export default function AdminDashboardPage() {
     totalOrders: 0,
     totalCustomers: 0,
     totalRevenue: 0,
+    pipelineRevenue: 0,
     recentOrders: [],
     lowStockProducts: [],
     loading: true,
@@ -96,6 +98,7 @@ export default function AdminDashboardPage() {
           totalOrders: d.totalOrders ?? 0,
           totalCustomers: d.totalCustomers ?? 0,
           totalRevenue: d.totalRevenue ?? 0,
+          pipelineRevenue: d.pipelineRevenue ?? 0,
           recentOrders: d.recentOrders ?? [],
           lowStockProducts: d.lowStockProducts ?? [],
           loading: false,
@@ -129,9 +132,11 @@ export default function AdminDashboardPage() {
       icon: Users,
     },
     {
-      label: "Pendapatan",
+      label: "Pendapatan Lunas",
       value: formatRp(data.totalRevenue),
-      subtitle: "total pendapatan",
+      subtitle: data.pipelineRevenue > 0
+        ? `+ ${formatRp(data.pipelineRevenue)} belum lunas`
+        : "pesanan lunas",
       icon: DollarSign,
     },
   ];

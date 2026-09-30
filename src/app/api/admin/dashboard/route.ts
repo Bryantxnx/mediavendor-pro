@@ -54,12 +54,27 @@ export async function GET() {
           .limit(10),
       ]);
 
-    // ── Aggregate revenue from all orders ──
+    // ── Aggregate stats from all orders ──
     const allOrders = ordersRes.data ?? [];
     const totalOrders = allOrders.length;
+
+    // Revenue = only orders that are actually paid (completed / delivered)
+    const PAID_STATUSES = ["completed", "delivered"];
     const totalRevenue = allOrders.reduce(
       (sum, o) =>
-        o.status !== "cancelled" ? sum + (Number(o.total_amount) || 0) : sum,
+        PAID_STATUSES.includes(o.status)
+          ? sum + (Number(o.total_amount) || 0)
+          : sum,
+      0,
+    );
+
+    // Pipeline = pending + confirmed + processing (belum lunas tapi aktif)
+    const PIPELINE_STATUSES = ["pending", "confirmed", "processing"];
+    const pipelineRevenue = allOrders.reduce(
+      (sum, o) =>
+        PIPELINE_STATUSES.includes(o.status)
+          ? sum + (Number(o.total_amount) || 0)
+          : sum,
       0,
     );
 
@@ -68,6 +83,7 @@ export async function GET() {
       totalOrders,
       totalCustomers: customersRes.count ?? 0,
       totalRevenue,
+      pipelineRevenue,
       recentOrders: recentRes.data ?? [],
       lowStockProducts: lowStockRes.data ?? [],
     });
