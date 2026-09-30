@@ -246,7 +246,7 @@ export default function InventoryPage() {
                           : "bg-red-500/10 text-red-400"
                       }`}
                     >
-                      {product.is_active ? "Active" : "Inactive"}
+                      {product.is_active ? "Aktif" : "Nonaktif"}
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-center">
