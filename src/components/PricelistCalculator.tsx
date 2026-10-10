@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useSpring, useTransform, useMotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -42,12 +41,6 @@ import {
 import { generateInvoicePDF } from "@/lib/generate-invoice";
 import { buildWaUrl } from "@/data/site-config";
 
-/* 3D Equipment Preview — client-only, no SSR */
-const EquipmentPreview3D = dynamic(
-  () => import("@/components/three/EquipmentPreview3D"),
-  { ssr: false }
-);
-
 /* ── Snap.js type declaration ── */
 declare global {
   interface Window {
@@ -63,8 +56,7 @@ declare global {
 }
 
 /* ── Icon map ── */
-type IconProps = { className?: string; "aria-hidden"?: boolean | "true" | "false" };
-const categoryIcons: Record<RentalCategory, React.ComponentType<IconProps>> = {
+const categoryIcons: Record<RentalCategory, React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>> = {
   Kamera: Camera,
   Lensa: Video,
   Lighting: Lightbulb,
@@ -622,11 +614,6 @@ export default function PricelistCalculator() {
             </p>
           </motion.div>
 
-          {/* 3D Equipment Preview — visible on all devices, above tabs */}
-          <div className="mb-8 mx-auto max-w-xs sm:max-w-sm lg:hidden">
-            <EquipmentPreview3D category={activeCategory} />
-          </div>
-
           {/* Category Tabs */}
           <div className="mb-8 flex flex-wrap justify-center gap-2">
             {rentalCategories.map((cat) => {
@@ -823,11 +810,6 @@ export default function PricelistCalculator() {
             {/* ── Right: Desktop Sticky Sidebar ── */}
             <div className="hidden lg:block lg:col-span-1">
               <div className="sticky top-24 rounded-2xl glass p-6">
-                {/* 3D Equipment Preview — desktop sidebar */}
-                <div className="mb-5">
-                  <EquipmentPreview3D category={activeCategory} />
-                </div>
-
                 <div className="mb-4 flex items-center gap-2">
                   <Calculator
                     className="h-5 w-5 text-accent"
