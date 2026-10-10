@@ -1,25 +1,48 @@
 "use client";
 
-import { useRef, useMemo, Suspense } from "react";
+import { useRef, useMemo, Suspense, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, Float } from "@react-three/drei";
 import * as THREE from "three";
 import LazyCanvas from "./LazyCanvas";
 import { use3DQuality } from "./use3DQuality";
 
-/* ── Dragon Model — loaded from .glb file ── */
-function DragonModel() {
-  const groupRef = useRef<THREE.Group>(null);
-  const { pointer } = useThree();
-  const { scene } = useGLTF("/models/dragon_character_3d_by_oscar_creativo.glb");
+/* ── Drone Model — dron.glb with spinning propellers ── */
+const PROPELLER_NAMES = [
+  "Cylinder028_24",
+  "Cylinder001_25",
+  "Cylinder002_26",
+  "Cylinder003_27",
+  "Cylinder004_28",
+];
 
-  // Clone scene so it can be reused safely
+function DroneModel() {
+  const groupRef = useRef<THREE.Group>(null);
+  const propellerRefs = useRef<THREE.Object3D[]>([]);
+  const { pointer } = useThree();
+  const { scene } = useGLTF("/models/dron.glb");
+
   const clonedScene = useMemo(() => scene.clone(), [scene]);
+
+  // Grab propeller objects after mount
+  useEffect(() => {
+    const props: THREE.Object3D[] = [];
+    clonedScene.traverse((obj) => {
+      if (PROPELLER_NAMES.includes(obj.name)) {
+        props.push(obj);
+      }
+    });
+    propellerRefs.current = props;
+  }, [clonedScene]);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
-    // Slow rotation
-    groupRef.current.rotation.y += delta * 0.15;
+
+    // Spin propellers fast
+    propellerRefs.current.forEach((p) => {
+      p.rotation.z += delta * 25;
+    });
+
     // Cursor parallax
     groupRef.current.position.x = THREE.MathUtils.lerp(
       groupRef.current.position.x,
@@ -34,15 +57,15 @@ function DragonModel() {
   });
 
   return (
-    <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.4}>
-      <group ref={groupRef} position={[1.5, -0.5, 0]} scale={1.8}>
+    <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.5}>
+      <group ref={groupRef} position={[1.8, 0, 0]} scale={0.35} rotation={[0.3, -0.5, 0]}>
         <primitive object={clonedScene} />
       </group>
     </Float>
   );
 }
 
-/* ── Particle Field — sparse floating amber dots ── */
+/* ── Particle Field ── */
 function ParticleField({ count = 100 }: { count?: number }) {
   const pointsRef = useRef<THREE.Points>(null);
 
@@ -104,19 +127,16 @@ export default function Hero3DScene() {
         pointerEvents: "none",
       }}
     >
-      {/* Lighting */}
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} />
       <directionalLight position={[-3, 2, 4]} intensity={0.3} color="#F59E0B" />
       <pointLight position={[2, 3, 3]} intensity={0.5} color="#F59E0B" />
       <pointLight position={[-4, -1, -3]} intensity={0.2} />
 
-      {/* Dragon Model */}
       <Suspense fallback={null}>
-        <DragonModel />
+        <DroneModel />
       </Suspense>
 
-      {/* Particles */}
       <ParticleField count={Math.min(quality.particleCount, 100)} />
     </LazyCanvas>
   );
