@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,6 +22,12 @@ import {
   type PortfolioCategory,
 } from "@/data/portfolio";
 import { buildWaUrl } from "@/data/site-config";
+
+/* 3D Gallery — client-only, no SSR */
+const Portfolio3DGallery = dynamic(
+  () => import("@/components/three/Portfolio3DGallery"),
+  { ssr: false }
+);
 
 export default function Portfolio() {
   const [activeCategory, setActiveCategory] =
@@ -71,6 +78,9 @@ export default function Portfolio() {
             pemerintah, dan brand ternama di seluruh Indonesia.
           </p>
         </motion.div>
+
+        {/* 3D Curved Gallery — immersive showcase */}
+        <Portfolio3DGallery projects={projects} onSelect={setModalProject} />
 
         {/* Filter Tabs with layoutId indicator */}
         <div className="mb-10 flex flex-wrap justify-center gap-2">

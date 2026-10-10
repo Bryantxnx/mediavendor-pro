@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Play, ChevronDown, Star, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -9,6 +10,12 @@ import {
   viewportOnce,
 } from "@/lib/motion";
 import { buildWaUrl } from "@/data/site-config";
+
+/* 3D Scene — client-only, no SSR (Canvas needs browser APIs) */
+const Hero3DCanvas = dynamic(
+  () => import("@/components/three/Hero3DScene"),
+  { ssr: false }
+);
 
 export default function Hero() {
   return (
@@ -35,6 +42,8 @@ export default function Hero() {
         <div className="absolute -bottom-40 left-0 h-[500px] w-[500px] rounded-full bg-accent/[0.05] blur-[130px]" />
         {/* Subtle white radial — center for depth */}
         <div className="absolute left-1/2 top-1/3 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-white/[0.015] blur-[100px]" />
+        {/* 3D Scene — behind all text, pointer-events already none from parent */}
+        <Hero3DCanvas />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
