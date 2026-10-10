@@ -43,11 +43,9 @@ function PhotoCard({ project, index, total, radius, onSelect }: PhotoCardProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.image]);
 
-  // Arc position — spread cards along a semicircle
+  // Arc position — spread cards in a full 360° circle
   const angle = useMemo(() => {
-    const arcSpan = Math.PI * 0.8; // ~144 degrees
-    const startAngle = -arcSpan / 2;
-    return startAngle + (index / Math.max(total - 1, 1)) * arcSpan;
+    return (index / total) * Math.PI * 2;
   }, [index, total]);
 
   const position = useMemo<[number, number, number]>(() => {
