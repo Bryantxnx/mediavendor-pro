@@ -50,7 +50,7 @@ function PhotoCard({ project, index, total, radius, onSelect }: PhotoCardProps) 
 
   const position = useMemo<[number, number, number]>(() => {
     const x = Math.sin(angle) * radius;
-    const z = Math.cos(angle) * radius - radius;
+    const z = Math.cos(angle) * radius;
     return [x, 0, z];
   }, [angle, radius]);
 
@@ -84,8 +84,8 @@ function PhotoCard({ project, index, total, radius, onSelect }: PhotoCardProps) 
   });
 
   // Card dimensions (16:9 aspect)
-  const cardW = 2.2;
-  const cardH = 1.24;
+  const cardW = 1.6;
+  const cardH = 0.9;
 
   return (
     <group position={position} rotation={rotation}>
@@ -152,7 +152,7 @@ function GalleryCarousel({ projects, onSelect }: GalleryCarouselProps) {
     groupRef.current.rotation.y += delta * 0.12;
   });
 
-  const radius = projects.length <= 3 ? 3 : 3.5;
+  const radius = projects.length <= 3 ? 4 : 5;
 
   return (
     <group ref={groupRef}>
@@ -226,8 +226,8 @@ export default function Portfolio3DGallery({
   return (
     <div className="relative w-full h-[320px] sm:h-[380px] lg:h-[440px] rounded-2xl overflow-hidden bg-gradient-to-b from-accent/[0.02] to-transparent mb-10">
       <LazyCanvas
-        cameraPosition={[0, 0.3, 4]}
-        fov={45}
+        cameraPosition={[0, 0.3, 12]}
+        fov={35}
         style={{ width: "100%", height: "100%" }}
       >
         <ambientLight intensity={0.5} />
