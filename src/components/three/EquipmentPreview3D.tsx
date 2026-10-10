@@ -58,7 +58,9 @@ const MODEL_CONFIG: Record<string, {
   },
 };
 
-/* ── GLB Model Loader with auto-rotate ── */
+/* ── GLB Model Loader with auto-fit + auto-rotate ── */
+const TARGET_SIZE = 1.8; // normalized size in scene units
+
 function GLBModel({ config }: {
   config: {
     path: string;
@@ -68,9 +70,28 @@ function GLBModel({ config }: {
   };
 }) {
   const groupRef = useRef<THREE.Group>(null);
+  const innerRef = useRef<THREE.Group>(null);
   const { pointer } = useThree();
   const { scene } = useGLTF(config.path);
   const clonedScene = useMemo(() => scene.clone(), [scene]);
+
+  // Auto-fit: measure bounding box, scale to TARGET_SIZE, center
+  useEffect(() => {
+    if (!innerRef.current) return;
+    const box = new THREE.Box3().setFromObject(innerRef.current);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    if (maxDim > 0) {
+      const fitScale = TARGET_SIZE / maxDim;
+      innerRef.current.scale.setScalar(fitScale);
+      // Re-measure after scale to center
+      const box2 = new THREE.Box3().setFromObject(innerRef.current);
+      const center = new THREE.Vector3();
+      box2.getCenter(center);
+      innerRef.current.position.sub(center);
+    }
+  }, [clonedScene]);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
@@ -84,13 +105,10 @@ function GLBModel({ config }: {
 
   return (
     <Float speed={2} rotationIntensity={0.1} floatIntensity={0.2}>
-      <group
-        ref={groupRef}
-        position={config.position}
-        rotation={config.rotation}
-        scale={config.scale}
-      >
-        <primitive object={clonedScene} />
+      <group ref={groupRef}>
+        <group ref={innerRef}>
+          <primitive object={clonedScene} />
+        </group>
       </group>
     </Float>
   );
@@ -114,6 +132,7 @@ function DroneGLBModel({ config }: {
   };
 }) {
   const groupRef = useRef<THREE.Group>(null);
+  const innerRef = useRef<THREE.Group>(null);
   const propellerRefs = useRef<THREE.Object3D[]>([]);
   const { pointer } = useThree();
   const { scene } = useGLTF(config.path);
@@ -125,6 +144,21 @@ function DroneGLBModel({ config }: {
       if (PROPELLER_NAMES.includes(obj.name)) props.push(obj);
     });
     propellerRefs.current = props;
+
+    // Auto-fit
+    if (!innerRef.current) return;
+    const box = new THREE.Box3().setFromObject(innerRef.current);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    if (maxDim > 0) {
+      const fitScale = TARGET_SIZE / maxDim;
+      innerRef.current.scale.setScalar(fitScale);
+      const box2 = new THREE.Box3().setFromObject(innerRef.current);
+      const center = new THREE.Vector3();
+      box2.getCenter(center);
+      innerRef.current.position.sub(center);
+    }
   }, [clonedScene]);
 
   useFrame((_, delta) => {
@@ -142,13 +176,10 @@ function DroneGLBModel({ config }: {
 
   return (
     <Float speed={2} rotationIntensity={0.1} floatIntensity={0.2}>
-      <group
-        ref={groupRef}
-        position={config.position}
-        rotation={config.rotation}
-        scale={config.scale}
-      >
-        <primitive object={clonedScene} />
+      <group ref={groupRef}>
+        <group ref={innerRef}>
+          <primitive object={clonedScene} />
+        </group>
       </group>
     </Float>
   );
