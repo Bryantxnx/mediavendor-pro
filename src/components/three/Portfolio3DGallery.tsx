@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useMemo, useState, useEffect } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { PortfolioProject } from "@/data/portfolio";
 import LazyCanvas from "./LazyCanvas";
@@ -145,26 +145,14 @@ interface GalleryCarouselProps {
 
 function GalleryCarousel({ projects, onSelect }: GalleryCarouselProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const { pointer } = useThree();
-  const autoRotateRef = useRef(0);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
-    autoRotateRef.current += delta * 0.08;
-    const targetY = autoRotateRef.current + pointer.x * 0.3;
-    groupRef.current.rotation.y = THREE.MathUtils.lerp(
-      groupRef.current.rotation.y,
-      targetY,
-      0.03
-    );
-    groupRef.current.position.y = THREE.MathUtils.lerp(
-      groupRef.current.position.y,
-      pointer.y * 0.08,
-      0.03
-    );
+    // Smooth constant auto-rotate only — no cursor, no zoom
+    groupRef.current.rotation.y += delta * 0.12;
   });
 
-  const radius = projects.length <= 3 ? 3.5 : 4.5;
+  const radius = projects.length <= 3 ? 3 : 3.5;
 
   return (
     <group ref={groupRef}>
