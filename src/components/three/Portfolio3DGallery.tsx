@@ -145,8 +145,6 @@ function PhotoCard({ project, index, total, radius, onSelect }: PhotoCardProps) 
         anchorX="center"
         anchorY="top"
         maxWidth={cardW}
-        font="/fonts/inter-var.woff2"
-        characters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&- "
       >
         {project.title}
       </Text>
@@ -158,8 +156,6 @@ function PhotoCard({ project, index, total, radius, onSelect }: PhotoCardProps) 
         color="#F59E0B"
         anchorX="center"
         anchorY="top"
-        font="/fonts/inter-var.woff2"
-        characters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789·& "
       >
         {project.client} · {project.year}
       </Text>
