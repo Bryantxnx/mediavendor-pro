@@ -2,7 +2,7 @@
 
 import { useRef, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Float, Environment } from "@react-three/drei";
+import { Float } from "@react-three/drei";
 import * as THREE from "three";
 import LazyCanvas from "./LazyCanvas";
 import { use3DQuality } from "./use3DQuality";
@@ -464,7 +464,7 @@ export default function EquipmentPreview3D({ category }: EquipmentPreview3DProps
         <directionalLight position={[3, 4, 5]} intensity={0.7} />
         <directionalLight position={[-2, -1, 3]} intensity={0.25} color="#F59E0B" />
         <pointLight position={[0, 2, 2]} intensity={0.3} color="#F59E0B" />
-        <Environment preset="city" environmentIntensity={0.35} />
+        <pointLight position={[-3, -1, -2]} intensity={0.2} />
         <ModelComponent />
       </LazyCanvas>
       {/* Subtle label */}

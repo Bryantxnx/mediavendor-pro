@@ -2,7 +2,7 @@
 
 import { useRef, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Float, Environment } from "@react-three/drei";
+import { Float } from "@react-three/drei";
 import * as THREE from "three";
 import LazyCanvas from "./LazyCanvas";
 import { use3DQuality } from "./use3DQuality";
@@ -141,7 +141,8 @@ export default function Hero3DScene() {
       <ambientLight intensity={0.3} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} />
       <directionalLight position={[-3, -2, 4]} intensity={0.3} color="#F59E0B" />
-      <Environment preset="city" environmentIntensity={0.4} />
+      <pointLight position={[-5, 3, -5]} intensity={0.4} color="#F59E0B" />
+      <pointLight position={[5, -2, 3]} intensity={0.2} />
 
       {/* Objects */}
       <AmberKnot />

@@ -2,7 +2,6 @@
 
 import { useRef, useMemo, useState, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Environment, Text } from "@react-three/drei";
 import * as THREE from "three";
 import type { PortfolioProject } from "@/data/portfolio";
 import LazyCanvas from "./LazyCanvas";
@@ -110,14 +109,14 @@ function PhotoCard({ project, index, total, radius, onSelect }: PhotoCardProps) 
       >
         <planeGeometry args={[cardW, cardH]} />
         {texture ? (
-          <meshStandardMaterial
+          <meshBasicMaterial
             map={texture}
             transparent
             opacity={hovered ? 1 : 0.88}
             side={THREE.FrontSide}
           />
         ) : (
-          <meshStandardMaterial
+          <meshBasicMaterial
             color="#172230"
             transparent
             opacity={0.7}
@@ -136,29 +135,6 @@ function PhotoCard({ project, index, total, radius, onSelect }: PhotoCardProps) 
           opacity={hovered ? 0.8 : 0.25}
         />
       </lineSegments>
-
-      {/* Title label below card */}
-      <Text
-        position={[0, -(cardH / 2) - 0.14, 0.01]}
-        fontSize={0.09}
-        color={hovered ? "#F59E0B" : "#94a3b8"}
-        anchorX="center"
-        anchorY="top"
-        maxWidth={cardW}
-      >
-        {project.title}
-      </Text>
-
-      {/* Category pill */}
-      <Text
-        position={[0, -(cardH / 2) - 0.28, 0.01]}
-        fontSize={0.065}
-        color="#F59E0B"
-        anchorX="center"
-        anchorY="top"
-      >
-        {project.client} · {project.year}
-      </Text>
     </group>
   );
 }
@@ -176,16 +152,13 @@ function GalleryCarousel({ projects, onSelect }: GalleryCarouselProps) {
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
-    // Slow auto-rotate
     autoRotateRef.current += delta * 0.08;
-    // Cursor offset adds parallax
     const targetY = autoRotateRef.current + pointer.x * 0.3;
     groupRef.current.rotation.y = THREE.MathUtils.lerp(
       groupRef.current.rotation.y,
       targetY,
       0.03
     );
-    // Subtle vertical parallax
     groupRef.current.position.y = THREE.MathUtils.lerp(
       groupRef.current.position.y,
       pointer.y * 0.08,
@@ -274,7 +247,7 @@ export default function Portfolio3DGallery({
         <ambientLight intensity={0.5} />
         <directionalLight position={[3, 3, 5]} intensity={0.6} />
         <directionalLight position={[-2, 1, 3]} intensity={0.2} color="#F59E0B" />
-        <Environment preset="city" environmentIntensity={0.3} />
+        <pointLight position={[0, 2, -3]} intensity={0.3} />
 
         <GalleryCarousel projects={projects} onSelect={onSelect} />
         <GalleryParticles count={quality.particleCount < 100 ? 40 : 80} />
